@@ -42,16 +42,14 @@ ninja.data = [{
           description: "",
           section: "Books",handler: () => {
               window.location.href = "/books/the_godfather/";
-            },},{id: "news-a-simple-inline-announcement",
-          title: 'A simple inline announcement.',
+            },},{id: "news-our-work-on-graph-neural-networks-with-adaptive-structures-has-been-accepted-by-ieee-journal-of-selected-topics-in-signal-processing",
+          title: 'Our work on “Graph Neural Networks with Adaptive Structures” has been accepted by...',
           description: "",
-          section: "News",},{id: "news-a-long-announcement-with-details",
-          title: 'A long announcement with details',
+          section: "News",},{id: "news-our-work-on-domain-adaptive-unfolded-graph-neural-networks-has-been-accepted-by-aaai-2025",
+          title: 'Our work on “Domain Adaptive Unfolded Graph Neural Networks” has been accepted by...',
           description: "",
-          section: "News",handler: () => {
-              window.location.href = "/news/announcement_2/";
-            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
-          title: 'A simple inline announcement with Markdown emoji! :sparkles: :smile:',
+          section: "News",},{id: "news-i-have-joined-prof-jhony-h-giraldo-s-group-at-télécom-paris-institut-polytechnique-de-paris-as-a-visiting-student",
+          title: 'I have joined Prof. Jhony H. Giraldo’s group at Télécom Paris, Institut Polytechnique...',
           description: "",
           section: "News",},{id: "projects-project-1",
           title: 'project 1',
