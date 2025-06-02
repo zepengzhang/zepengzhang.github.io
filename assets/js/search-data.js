@@ -104,7 +104,7 @@ ninja.data = [{
         title: 'LinkedIn',
         section: 'Socials',
         handler: () => {
-          window.open("https://www.linkedin.com/in/zepengzhang", "_blank");
+          window.open("https://www.linkedin.com/in/zepeng-zhang-a02303204", "_blank");
         },
       },{
         id: 'social-scholar',
