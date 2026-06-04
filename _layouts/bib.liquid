@@ -58,7 +58,7 @@
         {% assign author_array_limit = site.max_author_limit %}
       {% endif %}
 
-      {%- for author in entry.author_array -%}
+      {%- for author in entry.author_array limit: author_array_limit -%}
         {% assign author_is_self = false %}
         {%- assign author_last_name = author.last | regex_replace: '[*∗†‡§¶‖&^]', '' -%}
         {%- assign author_last_html = author.last | regex_replace: '([*∗†‡§¶‖&^]+)', '<sup>\1</sup>' -%}
@@ -101,7 +101,41 @@
           {% endif %}
         {%- endif -%}
       {% endfor %}
-      
+      {%- assign more_authors = author_array_size | minus: author_array_limit -%}
+
+      {%- assign more_authors_hide = more_authors | append: ' more author' -%}
+      {% if more_authors > 0 %}
+        {%- if more_authors > 1 -%}
+          {% assign more_authors_hide = more_authors_hide | append: 's' %}
+        {%- endif -%}
+        {% assign more_authors_show = '' %}
+        {%- for author in entry.author_array offset: author_array_limit -%}
+          {% assign more_authors_show = more_authors_show | append: author.first | append: ' ' | append: author.last %}
+          {% unless forloop.last %}
+            {% assign more_authors_show = more_authors_show | append: ', ' %}
+          {% endunless %}
+        {%- endfor -%}
+        {%- assign more_authors_show = more_authors_show | regex_replace: '([*∗†‡§¶‖&^]+)', '<sup>\1</sup>' -%}
+        , and
+        <span
+          class="more-authors"
+          title="click to view {{ more_authors_hide }}"
+          onclick="
+              var element = $(this);
+              element.attr('title', '');
+              var more_authors_text = element.text() == '{{ more_authors_hide }}' ? '{{ more_authors_show }}' : '{{ more_authors_hide }}';
+              var cursorPosition = 0;
+              var textAdder = setInterval(function(){
+                element.html(more_authors_text.substring(0, cursorPosition + 1));
+                if (++cursorPosition == more_authors_text.length){
+                  clearInterval(textAdder);
+                }
+            }, '{{ site.more_authors_animation_delay }}');
+          "
+        >
+          {{- more_authors_hide -}}
+        </span>
+      {% endif %}
       {% if entry.annotation %}
         <i
           class="fa-solid fa-circle-info ml-1"
@@ -126,9 +160,11 @@
     {% else %}
       {% capture entrytype %}{% endcapture %}
     {% endif %}
+    {% assign entrymonth = '' %}
     {% if entry.month %}
       {% capture entrymonth %}{{ " " }}{{ entry.month | capitalize }}{% endcapture %}
     {% endif %}
+    {% assign entryyear = '' %}
     {% if entry.year %}
       {% capture entryyear %}{{ " " }}{{ entry.year }}{% endcapture %}
     {% endif %}
@@ -166,6 +202,9 @@
       {% endif %}
       {% if entry.arxiv %}
         <a href="http://arxiv.org/abs/{{ entry.arxiv }}" class="btn btn-sm z-depth-0" role="button">arXiv</a>
+      {% endif %}
+      {% if entry.hal %}
+        <a href="https://hal.science/{{ entry.hal }}" class="btn btn-sm z-depth-0" role="button">HAL</a>
       {% endif %}
       {% if entry.bibtex_show %}
         <a class="bibtex btn btn-sm z-depth-0" role="button">Bib</a>
@@ -283,9 +322,27 @@
               aria-label="Google Scholar link"
               role="button"
             >
+              {% assign citation_count = 0 %}
+              {% assign scholar_id_key = site.scholar_userid | append: ':' | append: entry.google_scholar_id %}
+              {% assign publication_key = entry.google_scholar_id %}
+
+              {% if site.data.citations.papers[scholar_id_key] %}
+                {% assign citation_count = site.data.citations.papers[scholar_id_key].citations %}
+              {% elsif site.data.citations.papers[publication_key] %}
+                {% assign citation_count = site.data.citations.papers[publication_key].citations %}
+              {% else %}
+                {% for paper in site.data.citations.papers %}
+                  {% assign paper_key = paper[0] %}
+                  {% if paper_key contains entry.google_scholar_id %}
+                    {% assign citation_count = paper[1].citations %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
               <img
-                src="https://img.shields.io/badge/scholar-{% google_scholar_citations site.data.socials.scholar_userid entry.google_scholar_id %}-4285F4?logo=googlescholar&labelColor=beige"
-                alt="{% google_scholar_citations site.data.socials.scholar_userid entry.google_scholar_id %} Google Scholar citations"
+                src="https://img.shields.io/badge/scholar-{{ citation_count }}-4285F4?logo=googlescholar&labelColor=beige"
+                alt="{{ citation_count }} Google Scholar citations"
               >
             </a>
           {% endif %}
