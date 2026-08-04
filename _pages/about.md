@@ -28,4 +28,4 @@ I am a PhD student at [École Polytechnique Fédérale de Lausanne (EPFL)](https
 
 Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU). I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) and [City University of HongKong](https://www.cityu.edu.hk/) (CityU) as a research intern. 
 
-My current research focuses on Generative Model and Graph Machine Learning. Feel free to contact me if you have anything would like to discuss!
+My research focuses on Graph Machine Learning, Generative Model, and Graph Signal Processing. Feel free to contact me if you have anything would like to discuss!
