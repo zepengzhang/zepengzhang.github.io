@@ -26,6 +26,6 @@ latest_posts:
 
 I am a PhD student at [École Polytechnique Fédérale de Lausanne (EPFL)](https://www.epfl.ch/en/). I work in the [Intelligent Maintenance and Operations Systems (IMOS)](https://www.epfl.ch/labs/imos/) Lab under the supervision of Prof. Olga Fink. During my PhD, I have also worked with Prof. [Jhony H. Giraldo](https://jhonygiraldo.github.io/) at [Télécom Paris](https://www.telecom-paris.fr/en/home), [Institut Polytechnique de Paris](https://www.ip-paris.fr/en), as a visiting PhD student. 
 
-Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU). I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) and [City University of HongKong](https://www.cityu.edu.hk/) (CityU) as a research intern. 
+Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU). I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) and [City University of Hong Kong](https://www.cityu.edu.hk/) (CityU) as a research intern.
 
-My research focuses on Graph Machine Learning, Generative Model, and Graph Signal Processing. Feel free to contact me if you have anything would like to discuss!
+My research focuses on Graph Machine Learning, Generative Models, and Graph Signal Processing. Feel free to contact me if you have anything you would like to discuss!
