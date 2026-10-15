@@ -29,7 +29,7 @@ Graph neural networks often operate on noisy or perturbed graphs and encounter d
 
 Main publications:
 
-- [Graph Neural Networks With Adaptive Structures](https://doi.org/10.1109/JSTSP.2024.3485892) (IEEE JSTSP)
+- [Graph Neural Networks With Adaptive Structures](https://doi.org/10.1109/JSTSP.2024.3485892) (IEEE JSTSP 2024)
 - [Domain Adaptive Unfolded Graph Neural Networks](https://ojs.aaai.org/index.php/AAAI/article/view/34431) (AAAI 2025)
 
 <br>
