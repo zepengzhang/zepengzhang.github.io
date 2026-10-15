@@ -23,7 +23,14 @@ Main publications:
 
 **Robust and Generalizable Graph Neural Networks**
 
-Robust and Generalizable Graph Neural Networks
+Graph neural networks often operate on noisy or perturbed graphs and encounter distribution shifts across domains. These challenges motivate the design of architectures that can adapt to changes in graph structure and data distributions. My research investigates how optimization-based formulations can guide the design and analysis of such architectures. I develop message passing methods that jointly update node representations and graph structures, and study how the underlying optimization objectives inform adaptation across domains. The goal is to improve robustness and knowledge transfer through interpretable architectural designs supported by theoretical analysis. These works were developed in collaboration with [Ziping Zhao](https://faculty.sist.shanghaitech.edu.cn/zhao/), [Zengfeng Huang](https://zengfenghuang.github.io/), [Songtao Lu](https://songtaogithub.github.io/), and [Olga Fink](https://people.epfl.ch/olga.fink?lang=en).
+
+<img src="{{ "/assets/img/research/adaptive-structure-message-passing.png" | relative_url }}" alt="Adaptive-structure message passing jointly updates graph signals and graph structure to produce denoised outputs." class="img-fluid rounded" width="2000" height="471" loading="lazy">
+
+Main publications:
+
+- [Graph Neural Networks With Adaptive Structures](https://doi.org/10.1109/JSTSP.2024.3485892) (IEEE JSTSP)
+- [Domain Adaptive Unfolded Graph Neural Networks](https://ojs.aaai.org/index.php/AAAI/article/view/34431) (AAAI 2025)
 
 <br>
 
