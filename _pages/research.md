@@ -6,7 +6,7 @@ nav: true
 nav_order: 1
 ---
 
-I develop principled generative learning methods for structured and dynamical data, bridging generative modeling, graph learning, and mathematical optimization.
+My research interests lie at the intersection of generative modeling, graph machine learning, signal processing, and optimization, with applications in industrial complex systems. The overarching objective of my research is to build theoretically grounded and computationally efficient methods for complex systems.
 
 **Generative Modeling for Structured and Dynamical Data**
 
