@@ -36,4 +36,13 @@ Main publications:
 
 **Optimization and Algorithm Unrolling**
 
-Optimization and Algorithm Unrolling
+Optimization problems in communication systems often involve coupled variables, nonconvex objectives, and computationally expensive updates. My research focuses on understanding the connections among optimization frameworks and exploiting problem structure to develop efficient algorithms. By connecting minorization-maximization, fractional programming, and gradient-based methods, I investigate how surrogate design and acceleration strategies affect computational complexity and convergence behavior. I also develop algorithm unrolling methods that learn adaptive update rules while preserving the structure and convergence properties of the underlying optimization algorithms. These directions connect mathematical analysis with data-driven algorithm design for beamforming and resource allocation. These works were developed in collaboration with [ZheXian Yang](https://openreview.net/profile?id=%7EZhexian_Yang1), [Ziping Zhao](https://faculty.sist.shanghaitech.edu.cn/zhao/), [Kaiming Shen](https://kaimingshen.github.io/), [Daniel P. Palomar](https://www.danielppalomar.com/), and [Wei Yu](https://www.comm.utoronto.ca/~weiyu/).
+
+<img src="{{ "/assets/img/research/mm-net-recurrent-unfolding.png" | relative_url }}" alt="MM-Net recurrent unfolding architecture with learned adaptive majorization parameters and projected beamforming updates." class="img-fluid rounded" width="2000" height="538" loading="lazy">
+
+Main publications:
+
+- [MM-Net: Recurrent Unfolding With Adaptive Majorization for Weighted Sum-Rate Beamforming](https://doi.org/10.1109/LSP.2026.3710384) (IEEE SPL 2026)
+- [Discerning and Enhancing the Weighted Sum-Rate Maximization Algorithms in Communications](https://arxiv.org/abs/2311.04546) (Preprint, 2023)
+- [Accelerating Quadratic Transform and WMMSE](https://doi.org/10.1109/JSAC.2024.3431523) (IEEE JSAC 2024)
+- [Weighted Sum-Rate Maximization for Multi-Hop RIS-Aided Multi-User Communications: A Minorization-Maximization Approach](https://faculty.sist.shanghaitech.edu.cn/zhao/pubs/ZhangZhao-SPAWC21-MM_multi_hop_RIS.pdf) (IEEE SPAWC 2021)
