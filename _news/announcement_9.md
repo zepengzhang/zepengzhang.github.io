@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper “MM-Net: Recurrent Unfolding with Adaptive Majorization for Weighted Sum-Rate Beamforming” has been accepted by IEEE Signal Processing Letters.
+Our paper “[MM-Net: Recurrent Unfolding with Adaptive Majorization for Weighted Sum-Rate Beamforming](https://doi.org/10.1109/LSP.2026.3710384)” has been accepted by IEEE Signal Processing Letters.

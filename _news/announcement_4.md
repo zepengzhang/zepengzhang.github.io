@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper “Weighted Sum-Rate Maximization using MM: Convergence Rate and Deep Adaptation” has been accepted by EUSIPCO 2025.
+Our paper “[Weighted Sum-Rate Maximization using MM: Convergence Rate and Deep Adaptation](https://eurasip.org/Proceedings/Eusipco/Eusipco2025/pdfs/0002457.pdf)” has been accepted by EUSIPCO 2025.

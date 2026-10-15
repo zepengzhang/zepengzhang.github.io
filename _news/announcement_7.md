@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper “RINS-T: Robust Implicit Neural Solvers for Time Series Linear Inverse Problems” has been accepted by IEEE Transactions on Instrumentation & Measurement.
+Our paper “[RINS-T: Robust Implicit Neural Solvers for Time Series Linear Inverse Problems](https://arxiv.org/abs/2510.17396)” has been accepted by IEEE Transactions on Instrumentation & Measurement.

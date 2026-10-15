@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper “Spatiotemporal Imputation with Graph-Informed Flow Matching” has been accepted by ICML 2026.
+Our paper “[Spatiotemporal Imputation with Graph-Informed Flow Matching](https://arxiv.org/pdf/2606.06682)” has been accepted by ICML 2026.

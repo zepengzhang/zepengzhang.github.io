@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our work on “Domain Adaptive Unfolded Graph Neural Networks” has been accepted by AAAI 2025.
+Our work on “[Domain Adaptive Unfolded Graph Neural Networks](https://ojs.aaai.org/index.php/AAAI/article/view/34431)” has been accepted by AAAI 2025.

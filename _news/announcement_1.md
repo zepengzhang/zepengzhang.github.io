@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our work on “Graph Neural Networks with Adaptive Structures” has been accepted by IEEE Journal of Selected Topics in Signal Processing.
+Our work on “[Graph Neural Networks with Adaptive Structures](https://doi.org/10.1109/JSTSP.2024.3485892)” has been accepted by IEEE Journal of Selected Topics in Signal Processing.

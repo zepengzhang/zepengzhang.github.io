@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper “GeoLink: Empowering Remote Sensing Foundation Model with OpenStreetMap Data” has been accepted by NeurIPS 2025.
+Our paper “[GeoLink: Empowering Remote Sensing Foundation Model with OpenStreetMap Data](https://proceedings.neurips.cc/paper_files/paper/2025/hash/f681209306654a0c1f690f65810e8e45-Abstract-Conference.html)” has been accepted by NeurIPS 2025.

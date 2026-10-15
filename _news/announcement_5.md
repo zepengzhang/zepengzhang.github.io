@@ -5,4 +5,4 @@ inline: true
 related_posts: false
 ---
 
-Our paper “Algorithm-Informed Graph Neural Networks for Leakage Detection and Localization in Water Distribution Networks” has been accepted by Reliability Engineering & System Safety.
+Our paper “[Algorithm-Informed Graph Neural Networks for Leakage Detection and Localization in Water Distribution Networks](https://arxiv.org/abs/2408.02797)” has been accepted by Reliability Engineering & System Safety.
