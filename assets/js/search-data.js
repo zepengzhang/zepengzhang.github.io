@@ -122,6 +122,13 @@ ninja.data = [{
           window.open("mailto:%7A%65%70%65%6E%67.%7A%68%61%6E%67@%65%70%66%6C.%63%68", "_blank");
         },
       },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/zepengzhang", "_blank");
+        },
+      },{
         id: 'social-linkedin',
         title: 'LinkedIn',
         section: 'Socials',
@@ -141,6 +148,13 @@ ninja.data = [{
         section: 'Socials',
         handler: () => {
           window.open("", "_blank");
+        },
+      },{
+        id: 'social-work',
+        title: 'Work',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://people.epfl.ch/zepeng.zhang?lang=en", "_blank");
         },
       },{
       id: 'light-theme',
