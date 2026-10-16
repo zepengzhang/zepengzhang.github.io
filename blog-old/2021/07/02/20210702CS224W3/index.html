@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Zepeng Zhang" />
+
+
+
+<meta name="description" content="对于图机器学习，一个很重要的问题就是如何将图结构信息提取出来。在上一个Lecture，我们介绍了一些传统的hand-designed features，在这一节中，将引入图表示学习方法，图表示学习方法的目标是学习一个节点或图（or子图）到一个低维空间的映射关系，且这个映射空间中的几何关系能够反映原图的结构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224W Lecture 3 Node Embeddings">
+<meta property="og:url" content="https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/index.html">
+<meta property="og:site_name" content="Zepeng Zhang&#39;s Blog">
+<meta property="og:description" content="对于图机器学习，一个很重要的问题就是如何将图结构信息提取出来。在上一个Lecture，我们介绍了一些传统的hand-designed features，在这一节中，将引入图表示学习方法，图表示学习方法的目标是学习一个节点或图（or子图）到一个低维空间的映射关系，且这个映射空间中的几何关系能够反映原图的结构。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/cs224w_lecture3_1.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/cs224w_lecture3_2.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/cs224w_lecture3_3.png">
+<meta property="article:published_time" content="2021-07-02T17:44:00.000Z">
+<meta property="article:modified_time" content="2021-07-04T20:04:00.000Z">
+<meta property="article:author" content="Zepeng Zhang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/cs224w_lecture3_1.png">
+
+<link rel="apple-touch-icon" href= "/blog-old/apple-touch-icon.png">
+
+
+
+
+    <link rel="shortcut icon" href="/blog-old/apple-touch-icon.png">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/blog-old/css/style.css">
+
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>CS224W Lecture 3 Node Embeddings | Zepeng Zhang&#39;s Blog</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "https://cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "/blog-old/"; </script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/blog-old/" class="profilepic">
+            <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/blog-old/">Zepeng Zhang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">A master student at ShanghaiTech</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/blog-old/">主页</a></li>
+                        
+                            <li><a href="/blog-old/archives/">所有文章</a></li>
+                        
+                            <li><a href="/blog-old/tags/">标签云</a></li>
+                        
+                            <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/zepengzhang" target="_blank" rel="noopener" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/" target="_blank" rel="noopener">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/" target="_blank" rel="noopener">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">A senoir student at WHU</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/blog-old/" class="profilepic">
+                <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">A master student at ShanghaiTech</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/blog-old/">主页</a></li>
+                
+                    <li><a href="/blog-old/archives/">所有文章</a></li>
+                
+                    <li><a href="/blog-old/tags/">标签云</a></li>
+                
+                    <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/zepengzhang" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+</nav>
+      <div class="body-wrap"><article id="post-20210702CS224W3" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog-old/2021/07/02/20210702CS224W3/" class="article-date">
+      <time datetime="2021-07-02T17:44:00.000Z" itemprop="datePublished">2021-07-02</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CS224W Lecture 3 Node Embeddings
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/blog-old/categories/CS224W/">CS224W</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>对于图机器学习，一个很重要的问题就是如何将图结构信息提取出来。在上一个Lecture，我们介绍了一些传统的hand-designed features，在这一节中，将引入图表示学习方法，图表示学习方法的目标是学习一个节点或图（or子图）到一个低维空间的映射关系，且这个映射空间中的几何关系能够反映原图的结构。<br><a id="more"></a></p>
+<h1 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h1><p>本文主要参考资料为<a href="https://web.stanford.edu/class/cs224w/" target="_blank" rel="noopener">CS224W</a>的Lecture 3以及<a href="https://www.cs.mcgill.ca/~wlh/grl_book/" target="_blank" rel="noopener">Graph Representation Learning</a>的Chapter 3，<a href="https://www.youtube.com/playlist?list=PLoROMvodv4rPLKxIpqhjhPgdQy7imNkDn" target="_blank" rel="noopener">课程视频</a>可在Youtube观看。</p>
+<h2 id="Lecture-3-Node-Embedding"><a href="#Lecture-3-Node-Embedding" class="headerlink" title="Lecture 3: Node Embedding"></a>Lecture 3: Node Embedding</h2><p>对于图机器学习，一个很重要的问题就是如何将图结构信息提取出来。在上一个Lecture，我们介绍了一些传统的hand-designed features，在这一节中，将引入图表示学习方法，图表示学习方法的目标是学习一个节点或图（or子图）到一个低维空间的映射关系，且这个映射空间中的几何关系能够反映原图的结构。图表示学习与传统方法的主要区别为，在传统方法中我们将通过计算一些设计好的图上的统计量来提取结构特征的过程看做是一个预处理的步骤，而在图表示学习中，我们将提取特征这个问题本身也看做是一个机器学习问题，通过数据驱动的方法来学习如何encode图结构特征。</p>
+<p>在<a href="https://www-cs-faculty.stanford.edu/people/jure/pubs/node2vec-kdd16.pdf" target="_blank" rel="noopener">node2vec</a>这篇文章中有提到，我们可以将这一特征提取的过程与下行预测任务结合起来，一起来进行优化；也可以将特征提取与下行任务分割开来，单独对特征提取这一任务进行优化。本节课要介绍的node embedding的方法属于后者，是task-independent的。</p>
+<h3 id="从Encoder-Decoder的角度看Node-Embedding"><a href="#从Encoder-Decoder的角度看Node-Embedding" class="headerlink" title="从Encoder-Decoder的角度看Node Embedding"></a>从Encoder-Decoder的角度看Node Embedding</h3><p>Node embedding是指将节点映射到一个低维空间中，且映射空间中的embeddings的相似性能够反映对应节点在原图中的相似性。<br><img src="cs224w_lecture3_1.png" alt=""><br>Node embedding主要包含两个映射函数，即将节点映射到低维空间的encoder，和利用低维node embeddings恢复原图的结构信息的decoder。这个encoder-decoder framework的intuition是：如果我们能够从低维node embeddings恢复原图的结构信息，那么大体上可认为这些embedding包含了下行机器学习任务所需要的必要信息。</p>
+<h4 id="Encoder"><a href="#Encoder" class="headerlink" title="Encoder"></a>Encoder</h4><p>Encoder是将节点$v\in\mathcal{V}$映射到embedding vector$\mathbf{z}_v\in\mathbb{R}^d$的函数：</p>
+<script type="math/tex; mode=display">
+\mathrm{ENC}: \mathcal{V} \rightarrow \mathbb{R}^{d}</script><p>对于大部分node embedding的方法来说，encoder都是建立在shallow embedding上的，即映射函数为一乐lookup table：</p>
+<script type="math/tex; mode=display">
+\mathrm{ENC}(v)=\mathbf{Z}[v]，</script><p>其中$\mathbf{Z} \in \mathbb{R}^{|\mathcal{V}| \times d}$是一个包含了所有embedding的矩阵，$\mathbf{Z}[v]$表示节点$v$对应的$\mathbf{Z}$中的一行。</p>
+<p>本节所讨论的encoder都属于shallow embedding，但也有其他的encoder，如后面会介绍的考虑了节点特征或局部图结构信息的图神经网络。</p>
+<h4 id="Decoder"><a href="#Decoder" class="headerlink" title="Decoder"></a>Decoder</h4><p>Decoder的作用是根据encoder生成的embedding来恢复原图的信息，比如根据节点$u$的embedding来预测他的邻居节点或对节点进行分类等。<br><img src="cs224w_lecture3_2.png" alt=""><br>最常用的decoder是pairwise decoder：</p>
+<script type="math/tex; mode=display">
+\mathrm{DEC}: \mathbb{R}^{d} \times \mathbb{R}^{d} \rightarrow \mathbb{R}^{+},</script><p>其输入为一对node embeddings，输出是节点的相似性，pairwise decoder量化了原图不同节点间的相似性。</p>
+<p>为了描述原图的相似性，我们还需要先定义原图上的相似性，$\mathbf{S}[u, v]$，最简单的我们可以将相邻的节点定义为相似的，即$\mathbf{S}[u, v] \triangleq \mathbf{A}[u, v]$，在本节后续也将介绍一些其他的相似性度量方法。根据定义好的相似性函数，我们的目标就是优化encoder和decoder使得reconstruction loss最小</p>
+<script type="math/tex; mode=display">
+\mathrm{DEC}(\mathrm{ENC}(u), \mathrm{ENC}(v))=\mathrm{DEC}\left(\mathbf{z}_{u}, \mathbf{z}_{v}\right) \approx \mathbf{S}[u, v].</script><p>对于训练集$\mathcal{D}$，Reconstruction loss的计算式如下</p>
+<script type="math/tex; mode=display">
+\mathcal{L}=\sum_{(u, v) \in \mathcal{D}} \ell\left(\mathrm{DEC}\left(\mathbf{z}_{u}, \mathbf{z}_{v}\right), \mathbf{S}[u, v]\right),</script><p>其中$ell$衡量了decoder给出的相似性与原图相似性的差别。根据decoder和相似性的定义不同，$\ell$可以设为MSE或cross entropy等。</p>
+<h2 id="基于随机游走的图嵌入方法"><a href="#基于随机游走的图嵌入方法" class="headerlink" title="基于随机游走的图嵌入方法"></a>基于随机游走的图嵌入方法</h2><p>节点相似的定义有很多种，在这一部分，我们将介绍两种基于随机游走的方法：DeepWalk和node2vec，这类方法将同时出现在随机游走路径中的节点看作是相似的节点。DeepWalk和node2vec都用了shallow embedding并且都用了inner-product decoder。为了将decoder得到的相似性转化为概率，我们可以用softmax函数，即</p>
+<script type="math/tex; mode=display">
+\mathrm{DEC}\left(\mathbf{z}_{u}, \mathbf{z}_{v}\right) \triangleq \frac{e^{\mathbf{z}_{u}^{\top}} \mathbf{z}_{v}}{\sum_{v_{k} \in \mathcal{V}} e^{\mathbf{z}_{u}^{\top} \mathbf{z}_{k}}}
+\approx p_{\mathcal{G}, T}(v \mid u),</script><p>其中$p_{\mathcal{G}, T}(v \mid u)$表示从$u$开始的长度为$T$的random walk包含节点$v$的概率。其对应的交叉熵损失函数为</p>
+<script type="math/tex; mode=display">
+\mathcal{L}=\sum_{(u, v) \in \mathcal{D}}-\log \left(\mathrm{DEC}\left(\mathbf{z}_{u}, \mathbf{z}_{v}\right)\right).</script><p>然而，直接这样计算$\mathrm{DEC}\left(\mathbf{z}_{u}, \mathbf{z}_{v}\right)$的复杂度是很高的（由于softmax分母的求和）。</p>
+<p>为了解决计算复杂度高的问题，DeepWalk采用了<a href="https://ruder.io/word-embeddings-softmax/index.html#hierarchicalsoftmax" target="_blank" rel="noopener">Hierarchical Softmax</a>，而node2vec采用了negative sampling来近似softmax。另外，不同于DeepWalk走到不同节点的概率是平均的，node2vec可以引入超参数使得到不同节点的概率不平均，即有偏的随机游走，从而平衡深度优先与广度优先策略。</p>
+<h2 id="Embedding-Entire-Graphs"><a href="#Embedding-Entire-Graphs" class="headerlink" title="Embedding Entire Graphs"></a>Embedding Entire Graphs</h2><p>除了对节点进行embed，在一些应用graph level task中也需要对图进行embed，这里介绍三种方法：</p>
+<p>1.对节点进行embed，直接将节点的embedding相加作为图的embedding；</p>
+<p>2.引入一个新的节点，且该节点与子图中的所有节点向量，将该节点的node embedding作为子图的embedding;</p>
+<p>3.匿名随机游走：根据节点出现的顺序进行编号，用得到的随机游走序列的概率分布来作为图的embedding，该embedding可以通过采样或学习得到。</p>
+<p><img src="cs224w_lecture3_3.png" alt=""></p>
+<h1 id="Rference"><a href="#Rference" class="headerlink" title="Rference"></a>Rference</h1><p>William L Hamilton <a href="https://www.cs.mcgill.ca/~wlh/grl_book/" target="_blank" rel="noopener">Graph Representation Learning</a></p>
+<p>William L Hamilton, Rex Ying, Jure Leskovec <a href="https://www-cs.stanford.edu/people/jure/pubs/graphrepresentation-ieee17.pdf" target="_blank" rel="noopener">Representation Learning on Graphs: Methods and Applications</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>Title:</span><a href="/blog-old/2021/07/02/20210702CS224W3/">CS224W Lecture 3 Node Embeddings</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">Zepeng Zhang</a></p>
+        <p><span>Created:</span>2021-07-02, 19:44:00</p>
+        <p><span>Updated:</span>2021-07-04, 22:04:00</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/blog-old/2021/07/02/20210702CS224W3/" title="CS224W Lecture 3 Node Embeddings">https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/</a>
+            <span class="copy-path" data-clipboard-text="From https://zepengzhang.github.io/blog-old/2021/07/02/20210702CS224W3/　　By Zepeng Zhang" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog-old/2021/07/05/20210705CS224W4/">
+                    CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog-old/2021/06/26/20210625CS224W12/">
+                    CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-3-Node-Embedding"><span class="toc-number">1.1.</span> <span class="toc-text">Lecture 3: Node Embedding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#从Encoder-Decoder的角度看Node-Embedding"><span class="toc-number">1.1.1.</span> <span class="toc-text">从Encoder-Decoder的角度看Node Embedding</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Encoder"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">Encoder</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Decoder"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">Decoder</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于随机游走的图嵌入方法"><span class="toc-number">1.2.</span> <span class="toc-text">基于随机游走的图嵌入方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Embedding-Entire-Graphs"><span class="toc-number">1.3.</span> <span class="toc-text">Embedding Entire Graphs</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Rference"><span class="toc-number">2.</span> <span class="toc-text">Rference</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog-old/2021/07/05/20210705CS224W4/" title="Pre: CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog-old/2021/06/26/20210625CS224W12/" title="Next: CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog-old/2022/12/14/20221214/">Paper Notes</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W17/">CS224W Lecture 17 Scaling Up Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W16/">CS224W Lecture 16 Advanced Topics in Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/28/20210728CS224W1415/">CS224W Lecture 14 & 15 Generative Models for Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/26/20210726CS224W1213/">CS224W Lecture 12 & 13 Subgraph Mining and Community Detection</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/22/20210722CS224W1011/">CS224W Lecture 10 & 11 Reasoning over Knowledge Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W89/">CS224W Lecture 8 & 9 Applications of Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W67/">CS224W Lecture 6 & 7 Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/20/20210720CS224W_Colab1/">CS224W Colab1: Learning Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W5/">CS224W Lecture 5 Message Passing and Node Classification</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W_Colab0/">CS224W Colab0: Introduction of NetworkX and PyTorch Geometric</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/05/20210705CS224W4/">CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/02/20210702CS224W3/">CS224W Lecture 3 Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/06/26/20210625CS224W12/">CS224W Lecture 1 & 2 图机器学习导论 & 传统图机器学习方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/11/23/20201123GNN/">Basics of Graph Convolutional Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/23/20200703website%20modify/">网站优化及小功能添加</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703latex&Lyx%20tips/">Lyx & Latex 使用技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703mathjax/">如何使Hexo支持Latex数学公式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200704auto-correlation/">低自相关波形设计（Waveform design with low auto-correlation）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703Build%20Blog%20with%20Hexo%20&%20Netlify/">利用Hexo & Netlify建立博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2020-2026 Zepeng Zhang
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/blog-old/js/main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/blog-old/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+
+  </div>
+</body>
+</html>

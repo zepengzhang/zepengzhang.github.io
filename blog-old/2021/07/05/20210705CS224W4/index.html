@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Zepeng Zhang" />
+
+
+
+<meta name="description" content="在这一节中，我们将从矩阵分解的角度来分析随机游走和node embedding，并介绍PageRank算法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings">
+<meta property="og:url" content="https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/index.html">
+<meta property="og:site_name" content="Zepeng Zhang&#39;s Blog">
+<meta property="og:description" content="在这一节中，我们将从矩阵分解的角度来分析随机游走和node embedding，并介绍PageRank算法。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/1.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/2.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/3.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/4.png">
+<meta property="article:published_time" content="2021-07-05T18:56:00.000Z">
+<meta property="article:modified_time" content="2021-07-07T18:10:00.000Z">
+<meta property="article:author" content="Zepeng Zhang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/1.png">
+
+<link rel="apple-touch-icon" href= "/blog-old/apple-touch-icon.png">
+
+
+
+
+    <link rel="shortcut icon" href="/blog-old/apple-touch-icon.png">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/blog-old/css/style.css">
+
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings | Zepeng Zhang&#39;s Blog</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "https://cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "/blog-old/"; </script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/blog-old/" class="profilepic">
+            <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/blog-old/">Zepeng Zhang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">A master student at ShanghaiTech</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/blog-old/">主页</a></li>
+                        
+                            <li><a href="/blog-old/archives/">所有文章</a></li>
+                        
+                            <li><a href="/blog-old/tags/">标签云</a></li>
+                        
+                            <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/zepengzhang" target="_blank" rel="noopener" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/" target="_blank" rel="noopener">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/" target="_blank" rel="noopener">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">A senoir student at WHU</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/blog-old/" class="profilepic">
+                <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">A master student at ShanghaiTech</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/blog-old/">主页</a></li>
+                
+                    <li><a href="/blog-old/archives/">所有文章</a></li>
+                
+                    <li><a href="/blog-old/tags/">标签云</a></li>
+                
+                    <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/zepengzhang" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+</nav>
+      <div class="body-wrap"><article id="post-20210705CS224W4" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog-old/2021/07/05/20210705CS224W4/" class="article-date">
+      <time datetime="2021-07-05T18:56:00.000Z" itemprop="datePublished">2021-07-05</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/blog-old/categories/CS224W/">CS224W</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>在这一节中，我们将从矩阵分解的角度来分析随机游走和node embedding，并介绍PageRank算法。<br><a id="more"></a></p>
+<h1 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h1><p>本文主要参考资料为<a href="https://web.stanford.edu/class/cs224w/" target="_blank" rel="noopener">CS224W</a>的Lecture 4以及<a href="https://www.cs.mcgill.ca/~wlh/grl_book/" target="_blank" rel="noopener">Graph Representation Learning</a>的Chapter 3，<a href="https://www.youtube.com/playlist?list=PLoROMvodv4rPLKxIpqhjhPgdQy7imNkDn" target="_blank" rel="noopener">课程视频</a>可在Youtube观看。</p>
+<h3 id="PageRank"><a href="#PageRank" class="headerlink" title="PageRank"></a>PageRank</h3><p>不同网页间的连接关系可以看做是一个有向图，在这一节中我们将介绍三种根据分析连接关系来计算节点重要性的方法：PageRank，Personalized PageRank和有重启的随机游走。</p>
+<h4 id="PageRank-1"><a href="#PageRank-1" class="headerlink" title="PageRank"></a>PageRank</h4><p>定义$r_j$为节点$j$的rank，其计算式为</p>
+<script type="math/tex; mode=display">
+r_{j}=\sum_{i \rightarrow j} \frac{r_{i}}{d_{i}}，</script><p>其中$d_i$是节点$i$的出度。定义随机邻接矩阵$\mathbf{M}$，若节点$j$到节点$i$有边连接，则$M_{i j}=\frac{1}{d_{j}}$，可以看出矩阵$\mathbf{M}$的每一列和都为一。因此我们有</p>
+<script type="math/tex; mode=display">\boldsymbol{r}=\boldsymbol{M} \cdot \boldsymbol{r}.</script><p>可以看出这个形式与之前学过的Eigenvector centrality的形式是类似的，对于随机邻接矩阵，可以证明其最大特征值为1，而rank vector就是最大特征值对应的特征向量。Rank vector可以用power iteration来求解。</p>
+<p>对于PageRank还存在两个问题，一个是dead ends，即存在没有out-link的网页；另一个是spider traps，即存在一个group其所有的out-link都在group内。对于dead ends问题，可以将节点跳转到其他节点的概率均匀分配；对于spider traps，可采用一下rank的定义</p>
+<script type="math/tex; mode=display">
+r_{j}=\sum_{i \rightarrow j} \beta \frac{r_{i}}{d_{i}}+(1-\beta) \frac{1}{N},</script><p>要求解的迭代问题变为</p>
+<script type="math/tex; mode=display">
+\mathbf{r}=\beta M+(1-\beta)\left[\frac{1}{N}\right]_{N \times N} \mathbf{r}.</script><p>通常会取$\beta=0.8,0.9.$</p>
+<h4 id="Personalized-PageRank和有重启的随机游走"><a href="#Personalized-PageRank和有重启的随机游走" class="headerlink" title="Personalized PageRank和有重启的随机游走"></a>Personalized PageRank和有重启的随机游走</h4><p>在Pagerank中，我们是对所有网页进行了排序，现在假设我们想为某用户推荐一些网页、商品、或电影等，是否能针对特定用户给出不同的推荐，而非PageRank的全局排序呢？这里将介绍两种方法，Personalized PageRank和有重启的随机游走。</p>
+<p>在PageRank算法中，可以看做每一步都可以teleport到一个节点集合$\mathcal{S}$，对于vanilla PageRank，这个集合是所有节点；对于Personalized PageRank，这个节点是所有节点的一个子集；对于有重启的随机游走，这个集合只包含一个节点。Personalized PageRank可以用于已知用户购买的某些商品，来对其他商品进行rank从而进行推荐；有重启的随机游走可以用于为购买了特定产品Q的用户推荐其他产品，相当于对其他产品与Q的proximity进行rank。<br><img src="1.png" alt=""><br>这两种PageRank的变体同样也是一个求limiting distribution的问题，即找到随机邻接矩阵的最大特征值对应的特征向量，可以用power iteration求解。</p>
+<h3 id="矩阵分解和Node-Embedding"><a href="#矩阵分解和Node-Embedding" class="headerlink" title="矩阵分解和Node Embedding"></a>矩阵分解和Node Embedding</h3><p>回顾一下上节课讲的embedding lookup<br><img src="2.png" alt=""><br>我们的目标是让相似的节点对$(u,v)$对应的embedding的内积$\mathbf{z}_{v}^{T}\mathbf{z}_{u}$尽可能大，如果将相邻的节点看做是相似的，那么我们的目标就是</p>
+<script type="math/tex; mode=display">
+\min _{\mathbf{Z}}\left\|\mathbf{A}-\mathbf{Z}^{T} \mathbf{Z}\right\|_{2}.</script><p>当然，其他的loss function也是可以的，比如上节课用的softmax，还有decoder我们这里也给定了是内积，但是使$\mathbf{Z}^{T} \mathbf{Z}$逼近$\mathbf{A}$的目标是一样的。</p>
+<p>除了adjacency similarity，接下来我们看一下更复杂的randomwalk similarity。以Deepwalk为例，相似性矩阵定义为<br><img src="3.png" alt=""><br>通过使$\mathbf{Z}^{T} \mathbf{Z}$逼近这个矩阵，就可以用矩阵分解的方法来implement Deepwalk。当然，node2vec等方法也可以用矩阵分解的方式来formulate，具体证明可在论文<a href="https://arxiv.org/pdf/1710.02971.pdf" target="_blank" rel="noopener">Network Embedding as Matrix Factorization: Unifying DeepWalk, LINE, PTE, and node2vec</a>中找到。</p>
+<h3 id="Limitations"><a href="#Limitations" class="headerlink" title="Limitations"></a>Limitations</h3><p>1.无法得到不在训练集内的节点的embedding，如新加入的节点；</p>
+<p>2.无法捕捉如下的结构相似性；<br><img src="4.png" alt=""><br>3.无法使用node，edge，graph的特征。</p>
+<p>为了解决这些limitation，下节课开始将介绍deep representation learning和graph neural networks。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>Title:</span><a href="/blog-old/2021/07/05/20210705CS224W4/">CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">Zepeng Zhang</a></p>
+        <p><span>Created:</span>2021-07-05, 20:56:00</p>
+        <p><span>Updated:</span>2021-07-07, 20:10:00</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/blog-old/2021/07/05/20210705CS224W4/" title="CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings">https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/</a>
+            <span class="copy-path" data-clipboard-text="From https://zepengzhang.github.io/blog-old/2021/07/05/20210705CS224W4/　　By Zepeng Zhang" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog-old/2021/07/08/20210708CS224W_Colab0/">
+                    CS224W Colab0: Introduction of NetworkX and PyTorch Geometric
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog-old/2021/07/02/20210702CS224W3/">
+                    CS224W Lecture 3 Node Embeddings
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PageRank"><span class="toc-number">1.0.1.</span> <span class="toc-text">PageRank</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PageRank-1"><span class="toc-number">1.0.1.1.</span> <span class="toc-text">PageRank</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Personalized-PageRank和有重启的随机游走"><span class="toc-number">1.0.1.2.</span> <span class="toc-text">Personalized PageRank和有重启的随机游走</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#矩阵分解和Node-Embedding"><span class="toc-number">1.0.2.</span> <span class="toc-text">矩阵分解和Node Embedding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Limitations"><span class="toc-number">1.0.3.</span> <span class="toc-text">Limitations</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog-old/2021/07/08/20210708CS224W_Colab0/" title="Pre: CS224W Colab0: Introduction of NetworkX and PyTorch Geometric">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog-old/2021/07/02/20210702CS224W3/" title="Next: CS224W Lecture 3 Node Embeddings">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog-old/2022/12/14/20221214/">Paper Notes</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W17/">CS224W Lecture 17 Scaling Up Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W16/">CS224W Lecture 16 Advanced Topics in Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/28/20210728CS224W1415/">CS224W Lecture 14 & 15 Generative Models for Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/26/20210726CS224W1213/">CS224W Lecture 12 & 13 Subgraph Mining and Community Detection</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/22/20210722CS224W1011/">CS224W Lecture 10 & 11 Reasoning over Knowledge Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W89/">CS224W Lecture 8 & 9 Applications of Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W67/">CS224W Lecture 6 & 7 Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/20/20210720CS224W_Colab1/">CS224W Colab1: Learning Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W5/">CS224W Lecture 5 Message Passing and Node Classification</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W_Colab0/">CS224W Colab0: Introduction of NetworkX and PyTorch Geometric</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/05/20210705CS224W4/">CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/02/20210702CS224W3/">CS224W Lecture 3 Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/06/26/20210625CS224W12/">CS224W Lecture 1 & 2 图机器学习导论 & 传统图机器学习方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/11/23/20201123GNN/">Basics of Graph Convolutional Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/23/20200703website%20modify/">网站优化及小功能添加</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703latex&Lyx%20tips/">Lyx & Latex 使用技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703mathjax/">如何使Hexo支持Latex数学公式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200704auto-correlation/">低自相关波形设计（Waveform design with low auto-correlation）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703Build%20Blog%20with%20Hexo%20&%20Netlify/">利用Hexo & Netlify建立博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2020-2026 Zepeng Zhang
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/blog-old/js/main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/blog-old/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+
+  </div>
+</body>
+</html>

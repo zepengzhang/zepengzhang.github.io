@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Zepeng Zhang" />
+
+
+
+<meta name="description" content="最近课题组的Summer Reading Group在学这门课，顺便写点笔记巩固一下，也方便日后查看。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法">
+<meta property="og:url" content="https://zepengzhang.github.io/blog-old/2021/06/26/20210625CS224W12/index.html">
+<meta property="og:site_name" content="Zepeng Zhang&#39;s Blog">
+<meta property="og:description" content="最近课题组的Summer Reading Group在学这门课，顺便写点笔记巩固一下，也方便日后查看。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/06/26/20210625CS224W12/cs224w_lecture1_1.png">
+<meta property="article:published_time" content="2021-06-26T19:54:00.000Z">
+<meta property="article:modified_time" content="2021-06-26T19:54:00.000Z">
+<meta property="article:author" content="Zepeng Zhang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zepengzhang.github.io/blog-old/2021/06/26/20210625CS224W12/cs224w_lecture1_1.png">
+
+<link rel="apple-touch-icon" href= "/blog-old/apple-touch-icon.png">
+
+
+
+
+    <link rel="shortcut icon" href="/blog-old/apple-touch-icon.png">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/blog-old/css/style.css">
+
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法 | Zepeng Zhang&#39;s Blog</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "https://cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "/blog-old/"; </script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/blog-old/" class="profilepic">
+            <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/blog-old/">Zepeng Zhang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">A master student at ShanghaiTech</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/blog-old/">主页</a></li>
+                        
+                            <li><a href="/blog-old/archives/">所有文章</a></li>
+                        
+                            <li><a href="/blog-old/tags/">标签云</a></li>
+                        
+                            <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/zepengzhang" target="_blank" rel="noopener" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/" target="_blank" rel="noopener">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/" target="_blank" rel="noopener">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">A senoir student at WHU</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/blog-old/" class="profilepic">
+                <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">A master student at ShanghaiTech</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/blog-old/">主页</a></li>
+                
+                    <li><a href="/blog-old/archives/">所有文章</a></li>
+                
+                    <li><a href="/blog-old/tags/">标签云</a></li>
+                
+                    <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/zepengzhang" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+</nav>
+      <div class="body-wrap"><article id="post-20210625CS224W12" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog-old/2021/06/26/20210625CS224W12/" class="article-date">
+      <time datetime="2021-06-26T19:54:00.000Z" itemprop="datePublished">2021-06-26</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/blog-old/categories/CS224W/">CS224W</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>最近课题组的Summer Reading Group在学这门课，顺便写点笔记巩固一下，也方便日后查看。<br><a id="more"></a></p>
+<h1 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h1><p>本文主要参考资料为<a href="https://web.stanford.edu/class/cs224w/" target="_blank" rel="noopener">CS224W</a>的Lecture 1和lecture 2以及<a href="https://www.cs.mcgill.ca/~wlh/grl_book/" target="_blank" rel="noopener">Graph Representation Learning</a>的Chapter 1 &amp; Chapter 2，<a href="https://www.youtube.com/playlist?list=PLoROMvodv4rPLKxIpqhjhPgdQy7imNkDn" target="_blank" rel="noopener">课程视频</a>可在Youtube观看。</p>
+<p>Lecture 1主要介绍了一些图的应用和图的基础知识，Lecture 2主要从Node Level, Link Level, 和Graph Level三个方面介绍了传统的一些图的问题和特征提取的方法。</p>
+<h2 id="Lecture-1-Introduction-Machine-Learning-for-Graphs"><a href="#Lecture-1-Introduction-Machine-Learning-for-Graphs" class="headerlink" title="Lecture 1: Introduction; Machine Learning for Graphs"></a>Lecture 1: Introduction; Machine Learning for Graphs</h2><p>图数据结构广泛存在于各类自然科学与社会科学的问题中，从社交网络、推荐系统，到分子结构，都存在着图结构。图结构不仅能够表现出不同节点间的关系，并且具有泛化性，如下图所示，同样的一个图在不同问题中可以有不同的含义：</p>
+<p><img src="cs224w_lecture1_1.png" alt=""></p>
+<p>随着大数据时代的到来，我们有了规模越来越大，结构越来越复杂的图数据，本门课的目的就是利用机器学习的方法来建模、分析和理解图数据。</p>
+<h3 id="图的表示"><a href="#图的表示" class="headerlink" title="图的表示"></a>图的表示</h3><p>图 $\mathcal{G}=(\mathcal{V},\mathcal{E})$ 是由节点集合 $\mathcal{V}$ 和边集合 $\mathcal{E}$ 组成的，其中 $(u,v)\in\mathcal{E}$ 表示 $u,v\in\mathcal{V}$ 之间存在一条边。根据边是否具有方向可以将图分为有向图与无向图。</p>
+<p>图可以用邻接矩阵 $\mathbf{A}\in\mathbb{R}^{\mid\mathcal{V}\mid\times\mid\mathcal{V}\mid}$ 来表示，其中如果 $(u,v)\in\mathcal{E}$ 则 $\mathbf{A}_{uv}=0$, 如果<br>$(u,v)\notin\mathcal{E}$ 则 $\mathbf{A}_{uv}=0$.</p>
+<p>图是一种描述不同对象之间关系的数据结构，是一些节点和边的集合。图这种数据结构普遍存在于各类问题中，这门课的目的就是学习如何用机器学习的方法来分析。对于有向图来说，邻接矩阵的第$u$行的和为节点 $u$ 的出度，第 $u$ 列的和为节点 $u$ 的入度。还可以对边赋予不同的权重，来表示有权重的图。对于稀疏的邻接矩阵，可以通过存储邻接关系的列表节省存储空间。</p>
+<p>除了以上的分类外，还可以将邻接矩阵增加一维来表示不同边的类型，如异构图，其中一个例子是 multipartite graph，即只有属于不同类别的两个节点间才会存在边。</p>
+<p>在很多情况下，除了节点之间用边连接的关系，我们还会有一些特征，如社交网络中的用户信息。同城来说这些信息都是 node-level 的。在异构图中，我们通常会假设不同类别的节点会有不同类别的特征。</p>
+<h3 id="图机器学习"><a href="#图机器学习" class="headerlink" title="图机器学习"></a>图机器学习</h3><p>相比于图像和文本，图结构的大小是动态变化的，并且没有固定的节点顺序。常见的图机器学习问题有节点分类、连接预测、图分类、聚类、图生成等。从问题类型上可大致分为Node Level, Edge Level和Graph Level。图机器学习所采用的机器学习方法与其他应用中的机器学习方法相类似，但也有些不同。比如对于节点分类任务来说，不同于传统的基于监督学习的分类问题，图中的节点并不是i.i.d.的，实际上，很多方法正是利用这一点来探索相邻节点间特征的同质性来进行分类的。</p>
+<p>下一节将分别介绍Node Level, Edge Level和Graph Level三类传统的图机器学习方法，这里就不再过多介绍了。</p>
+<h2 id="Lecture-2-Traditional-Methods-for-ML-on-Graphs"><a href="#Lecture-2-Traditional-Methods-for-ML-on-Graphs" class="headerlink" title="Lecture 2: Traditional Methods for ML on Graphs"></a>Lecture 2: Traditional Methods for ML on Graphs</h2><p>传统的图机器学习分为四步：（1）为节点、边和图设计特征（2）收集所有训练数据的特征（3）训练机器学习模型（4）应用机器学习模型。在本节中，会分别介绍如何为节点、边和图设计特征。</p>
+<p>本节课所讨论的皆为无向图。</p>
+<h3 id="Node-Level-Tasks-and-Features"><a href="#Node-Level-Tasks-and-Features" class="headerlink" title="Node Level Tasks and Features"></a>Node Level Tasks and Features</h3><p>对于节点层面的任务，构建特征的主要目标是描述节点在网络中的位置和结构信息，如节点的度、节点的中心性、聚类系数以及Graphlets等。各类节点特征主要可分为两类：基于重要性（节点的度、节点的中心性）和基于结构（节点的度、聚类系数以及Graphlet Degree Vector）。基于重要性的特征可用于预测图中影响力大的节点，基于结构的特征可用于预测图中节点所起到的作用。</p>
+<h4 id="节点的度Node-Degree"><a href="#节点的度Node-Degree" class="headerlink" title="节点的度Node Degree"></a>节点的度Node Degree</h4><p>节点 $v$ 的度 $k_v$ 表示节点 $v$ 的邻居节点的数量。</p>
+<h4 id="节点的中心性Node-Centrality"><a href="#节点的中心性Node-Centrality" class="headerlink" title="节点的中心性Node Centrality"></a>节点的中心性Node Centrality</h4><p>节点的度没有区分不同节点的重要性，节点的中心性 $c_v$ 考虑到了不同节点的重要性，根据对重要性的不同描述，也有不同的节点中心性的表示形式，如 Eigenvector centrality, Betweenness centrality, 和 Closeness centrality 等。</p>
+<p>Eigenvector centrality: 对于特征向量中心性，我们用节点 $v$ 的邻居节点 $u\in\mathcal{N}(v)$ 的中心性的和来表示节点 $v$ 的中心性，计算式如下： <script type="math/tex">c_{v}=\frac{1}{\lambda} \sum_{u \in N(v)} c_{u},</script> 其中 $\lambda$ 是一个大于零的常数。 根据这个定义，可以得到 <script type="math/tex">\lambda \boldsymbol{c}=\boldsymbol{A} \boldsymbol{c}.</script> 由于 $\mathbf{A}$ 中的元素都是非负的，根据<a href="https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem" target="_blank" rel="noopener">Perron-Frobenius Theorem</a>，$\mathbf{A}$ 有唯一的大于0的最大特征值。我们将 $\lambda$ 选为矩阵 $\mathbf{A}$ 的最大特征值，就可以得到中心性向量为 $\mathbf{A}$ 的最大特征值对应的特征向量。</p>
+<p>Betweenness centrality：Betweenness centrality衡量的是节点 $v$ 出现在其他节点对的最短路径上的频率，计算式如下：$$<br>c_{v}=\sum_{s \neq v \neq t} \frac{#(\text { shortest paths betwen } s \text { and } t \text { that contain } v)}{#(\text { shortest paths between } s \text { and } t)}</p>
+<script type="math/tex; mode=display">
+
+Closeness centrality：Closeness centrality衡量的是节点 $v$ 到其他节点的距离，计算式如下：</script><p>c_{v}=\frac{1}{\sum_{u \neq v} \text { shortest path length between } u \text { and } v}</p>
+<script type="math/tex; mode=display">
+
+#### 聚类系数
+聚类系数 $e_v$ 衡量的是节点 $v$ 的邻居节点之间连接关系的强弱，计算式如下：</script><p>e_{v}=\frac{#(\text { edges among neighboring nodes })}{\left(\begin{array}{c}<br>k_{v} \\<br>2<br>\end{array}\right)<br># \text { (node pairs among } k_{v} \text { neighboring nodes) }<br>} \in[0,1]</p>
+<script type="math/tex; mode=display">
+
+![](cs224w_lecture2_1.png)
+
+#### Graphlets
+实际上聚类系数可以看做是在节点 $v$ 和其邻居节点组成的图中包含的三角形子图的个数
+![](cs224w_lecture2_2.png)
+而Graphlets就是将聚类系数泛化为计算其他结构子图的个数。根据给出的Graphlets的列表，就可以得到Graphlet Degree Vector，其中，该向量的每一个element表示对应的子图的个数。Graphlet Degree Vector衡量了节点的局部网络拓扑结构，对于比较节点相似性来说，提供了一个比节点的度和聚类系数更详细的度量。
+
+对于 Node Level 的 Graphlets，是指定了根节点的，这里与Graph Level 的 Graphlets 特征有所不同，后面会详细介绍。
+
+![](cs224w_lecture2_3.png)
+![](cs224w_lecture2_4.png)
+
+### Link Prediction Tasks and Features
+连接预测任务是要根据已有的连接去预测新的连接，或者是预测连接关系随时间的变化。常用方法为对每两个节点间的连接关系进行打分，将分数最高的一些link预测为有连接。Link Level Features主要有三种：Distance-based feature, Local neighborhood overlap, 和Global neighborhood overlap.
+
+Distance-based feature计算节点间的最短路径。Local neighborhood overlap计算节点间的共同邻居节点的数量。Global neighborhood overlap从全图结构来分析节点间的关系。
+
+Katz指数是最基础的一个Global neighborhood overlap的统计量。  $\mathbf{A}^{k}_{uv}$  可以表示从节点 $u$ 到节点 $v$ 的长度为 $k$ 的路径的条数， Katz指数的计算式为</script><p>S_{v_{1} v_{2}}=\sum_{l=1}^{infty} \beta^{l} \boldsymbol{A}_{v_{1} v_{2}}^{l},</p>
+<script type="math/tex; mode=display">其中 $0<\beta<1$ 是衰减系数。
+Katz指数矩阵的计算可以表示为</script><p>S=\sum_{i=1}^{\infty} \beta^{i} A^{i}=(I-\beta A)^{-1}-I.</p>
+<script type="math/tex; mode=display">
+
+
+### Graph Level Features and Graph Kernels
+构建图层面的特征的目标是描述整个图的结构，核方法是一种广泛应用的图层面预测的传统机器学习方法，本节会介绍两种graph kernels：Graphlet Kernel和Weisfeiler-Lehman Kernel.
+
+Graph kernel的主要思想是图上的 Bag-of-words (BoW)。
+
+
+#### Graphlet Kernel
+Graphlet是计算图上不同子图的个数得到graphlet count vector，不同于Node Level的Graphlets，这里并没有指定根节点。
+
+![](cs224w_lecture2_5.png)
+
+对于两个不同的图 $\mathcal{G}$ 和 $\mathcal{G}^\prime$ ，Graphlet Kernel计算对应的graphlet count vectors的内积</script><p>K\left(G, G^{\prime}\right)=\boldsymbol{f}_{G}^{\mathrm{T}} \boldsymbol{f}_{G^{\prime}}</p>
+<script type="math/tex; mode=display">
+对于不同size的图，可以将graphlet count vector normalize之后再计算Graphlet Kernel.
+
+Graphlet Kernel最大的问题是其计算复杂度过高，因此对于大规模的图来说，是很难应用的。
+
+
+#### Weisfeiler-Lehman Kernel
+Weisfeiler-Lehman Kernel是一种高效的计算graph level feature的方法，其主要思想是color refinement。
+
+首先对每个节点都设置一个初始颜色 $c^{(0)}(v)$ （每个节点的颜色都一样）。
+
+然后循环的refine节点的颜色</script><p>c^{(k+1)}(v)=\operatorname{HASH}\left(\left\{c^{(k)}(v),\left\{c^{(k)}(u)\right\}_{u \in N(v)}\right\}\right)</p>
+<p>$$<br>经过 $K$ 步后， $c^{(k)}(v)$ 能够捕捉到 $k$-hop的结构。</p>
+<p>最后图的特征用不同颜色的数量所组成的向量来表示，Weisfeiler-Lehman Kernel的值为特征向量的内积。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>Title:</span><a href="/blog-old/2021/06/26/20210625CS224W12/">CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">Zepeng Zhang</a></p>
+        <p><span>Created:</span>2021-06-26, 21:54:00</p>
+        <p><span>Updated:</span>2021-06-26, 21:54:00</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/blog-old/2021/06/26/20210625CS224W12/" title="CS224W Lecture 1 &amp; 2 图机器学习导论 &amp; 传统图机器学习方法">https://zepengzhang.github.io/blog-old/2021/06/26/20210625CS224W12/</a>
+            <span class="copy-path" data-clipboard-text="From https://zepengzhang.github.io/blog-old/2021/06/26/20210625CS224W12/　　By Zepeng Zhang" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog-old/2021/07/02/20210702CS224W3/">
+                    CS224W Lecture 3 Node Embeddings
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog-old/2020/11/23/20201123GNN/">
+                    Basics of Graph Convolutional Networks
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-1-Introduction-Machine-Learning-for-Graphs"><span class="toc-number">1.1.</span> <span class="toc-text">Lecture 1: Introduction; Machine Learning for Graphs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#图的表示"><span class="toc-number">1.1.1.</span> <span class="toc-text">图的表示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#图机器学习"><span class="toc-number">1.1.2.</span> <span class="toc-text">图机器学习</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-2-Traditional-Methods-for-ML-on-Graphs"><span class="toc-number">1.2.</span> <span class="toc-text">Lecture 2: Traditional Methods for ML on Graphs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Node-Level-Tasks-and-Features"><span class="toc-number">1.2.1.</span> <span class="toc-text">Node Level Tasks and Features</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#节点的度Node-Degree"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">节点的度Node Degree</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#节点的中心性Node-Centrality"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">节点的中心性Node Centrality</span></a></li></ol></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog-old/2021/07/02/20210702CS224W3/" title="Pre: CS224W Lecture 3 Node Embeddings">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog-old/2020/11/23/20201123GNN/" title="Next: Basics of Graph Convolutional Networks">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog-old/2022/12/14/20221214/">Paper Notes</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W17/">CS224W Lecture 17 Scaling Up Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W16/">CS224W Lecture 16 Advanced Topics in Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/28/20210728CS224W1415/">CS224W Lecture 14 & 15 Generative Models for Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/26/20210726CS224W1213/">CS224W Lecture 12 & 13 Subgraph Mining and Community Detection</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/22/20210722CS224W1011/">CS224W Lecture 10 & 11 Reasoning over Knowledge Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W89/">CS224W Lecture 8 & 9 Applications of Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W67/">CS224W Lecture 6 & 7 Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/20/20210720CS224W_Colab1/">CS224W Colab1: Learning Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W5/">CS224W Lecture 5 Message Passing and Node Classification</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W_Colab0/">CS224W Colab0: Introduction of NetworkX and PyTorch Geometric</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/05/20210705CS224W4/">CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/02/20210702CS224W3/">CS224W Lecture 3 Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/06/26/20210625CS224W12/">CS224W Lecture 1 & 2 图机器学习导论 & 传统图机器学习方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/11/23/20201123GNN/">Basics of Graph Convolutional Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/23/20200703website%20modify/">网站优化及小功能添加</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703latex&Lyx%20tips/">Lyx & Latex 使用技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703mathjax/">如何使Hexo支持Latex数学公式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200704auto-correlation/">低自相关波形设计（Waveform design with low auto-correlation）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703Build%20Blog%20with%20Hexo%20&%20Netlify/">利用Hexo & Netlify建立博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2020-2026 Zepeng Zhang
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/blog-old/js/main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/blog-old/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+
+  </div>
+</body>
+</html>

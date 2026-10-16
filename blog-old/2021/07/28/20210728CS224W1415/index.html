@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Zepeng Zhang" />
+
+
+
+<meta name="description" content="在之前的课程中，我们都是在考虑给定图上的学习任务，在这一节课我们会讨论如何生成图。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224W Lecture 14 &amp; 15 Generative Models for Graphs">
+<meta property="og:url" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/index.html">
+<meta property="og:site_name" content="Zepeng Zhang&#39;s Blog">
+<meta property="og:description" content="在之前的课程中，我们都是在考虑给定图上的学习任务，在这一节课我们会讨论如何生成图。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/1.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/2.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/3.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/4.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/5.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/6.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/7.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/8.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/9.png">
+<meta property="article:published_time" content="2021-07-28T19:45:00.000Z">
+<meta property="article:modified_time" content="2021-07-28T19:45:00.000Z">
+<meta property="article:author" content="Zepeng Zhang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/1.png">
+
+<link rel="apple-touch-icon" href= "/blog-old/apple-touch-icon.png">
+
+
+
+
+    <link rel="shortcut icon" href="/blog-old/apple-touch-icon.png">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/blog-old/css/style.css">
+
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>CS224W Lecture 14 &amp; 15 Generative Models for Graphs | Zepeng Zhang&#39;s Blog</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "https://cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "/blog-old/"; </script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/blog-old/" class="profilepic">
+            <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/blog-old/">Zepeng Zhang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">A master student at ShanghaiTech</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/blog-old/">主页</a></li>
+                        
+                            <li><a href="/blog-old/archives/">所有文章</a></li>
+                        
+                            <li><a href="/blog-old/tags/">标签云</a></li>
+                        
+                            <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/zepengzhang" target="_blank" rel="noopener" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/" target="_blank" rel="noopener">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/" target="_blank" rel="noopener">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">A senoir student at WHU</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/blog-old/" class="profilepic">
+                <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">A master student at ShanghaiTech</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/blog-old/">主页</a></li>
+                
+                    <li><a href="/blog-old/archives/">所有文章</a></li>
+                
+                    <li><a href="/blog-old/tags/">标签云</a></li>
+                
+                    <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/zepengzhang" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+</nav>
+      <div class="body-wrap"><article id="post-20210728CS224W1415" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog-old/2021/07/28/20210728CS224W1415/" class="article-date">
+      <time datetime="2021-07-28T19:45:00.000Z" itemprop="datePublished">2021-07-28</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CS224W Lecture 14 &amp; 15 Generative Models for Graphs
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/blog-old/categories/CS224W/">CS224W</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>在之前的课程中，我们都是在考虑给定图上的学习任务，在这一节课我们会讨论如何生成图。<br><a id="more"></a><br>本文主要参考资料为<a href="https://web.stanford.edu/class/cs224w/" target="_blank" rel="noopener">CS224W</a>的Lecture 14 &amp; 15，<a href="https://www.youtube.com/playlist?list=PLoROMvodv4rPLKxIpqhjhPgdQy7imNkDn" target="_blank" rel="noopener">课程视频</a>可在Youtube观看。</p>
+<p>研究图生成问题的动机主要有以下几方面：了解图的生成过程；预测当前的图随后会发生什么变化；模仿生成一些图片；判断图是否异常。</p>
+<p>本节课分为三部分，首先会介绍现实中的图有什么性质，然后会介绍传统的图生成算法以及深度图生成算法。</p>
+<h2 id="Properties-of-Real-World-Graphs"><a href="#Properties-of-Real-World-Graphs" class="headerlink" title="Properties of Real-World Graphs"></a>Properties of Real-World Graphs</h2><p>图的重要性质主要有四方面：度的分布、聚类系数、联通组成部分、路径长度。</p>
+<p>度的分布$P(k)$描述的是图中任一节点度为$k$的概率。</p>
+<p>聚类系数$C_{i}=\frac{2 e_{i}}{k_{i}\left(k_{i}-1\right)}$描述的是节点$i$周围邻居节点间的边与可能存在的边的数量的比值。</p>
+<p>连接性描述的是最大连通子图的大小。</p>
+<p>路径长度：直径描述节点间最大的路径长度、平均路径描述的是节点的平均距离。</p>
+<h2 id="Traditional-Graph-Generative-Models"><a href="#Traditional-Graph-Generative-Models" class="headerlink" title="Traditional Graph Generative Models"></a>Traditional Graph Generative Models</h2><h3 id="Erdos-Renyi-Random-Graphs"><a href="#Erdos-Renyi-Random-Graphs" class="headerlink" title="Erdos-Renyi Random Graphs"></a>Erdos-Renyi Random Graphs</h3><p>这里我们考虑拥有$n$个节点的无向图，每条边出现的概率为$p$，相同的$n$和$p$可以生成很多不同的图，ER图对应的四个图的性质的值分别如下。</p>
+<p>度的分布是二项分布的<br><img src="1.png" alt=""><br>聚类系数的期望约等于平均度除节点数<br><img src="2.png" alt=""><br>最大连通部分随p的增加而变化，当平均度为1时开始出现较大的组成部分<br><img src="3.png" alt=""><br>当$\log n&gt;n p&gt;c$时，$\operatorname{diam}\left(G_{n p}\right)=O(\log n / \log (n p))$。对于给定的度，$np$是常数，直径在$log(n)$量级。</p>
+<p>ER随机网络与实际网络相比，其度的分布是不同的，且聚类系数太低，没有兼顾到局部结构。且其连接性是一个phase transition的形式，而实际的图不论平均度是多少，大部分节点都是连接的。</p>
+<h3 id="The-Small-World-Model"><a href="#The-Small-World-Model" class="headerlink" title="The Small-World Model"></a>The Small-World Model</h3><p>Small-World模型考虑如何在保持高聚类系数的同时保证较短的路径长度。</p>
+<p>其首先根据某些规则生成一个网络，如环，然后对每条边都采取一定的概率连接到其他点，当概率为1时就是ER模型<br><img src="4.png" alt=""></p>
+<h3 id="Kronecker-Graph-Model"><a href="#Kronecker-Graph-Model" class="headerlink" title="Kronecker Graph Model"></a>Kronecker Graph Model</h3><p>Kronecker图模型考虑生成自相关的图，即给定一个邻接矩阵，对其做kronecker积生成更大的图<br><img src="5.png" alt=""><br>如果将邻接矩阵改为概率矩阵，就可以生成随机的kronecker图。在图过大时，可以不用判断每条边是否存在，而是采用采样的思想不断添加边<br><img src="6.png" alt=""><br>以上三种方法的图生成步骤都是提前假设好的，下面会介绍深度图生成，从原始数据直接学习图生成过程。</p>
+<h2 id="Deep-Graph-Generative-Models"><a href="#Deep-Graph-Generative-Models" class="headerlink" title="Deep Graph Generative Models"></a>Deep Graph Generative Models</h2><p>深度图生成模型是在给定从某分布采样的一些图的情况下，来学习这个分布生成新的图。首先通过极大似然估计来学习图的分布，然后再进行采样。采样可以先从noise distribution中采样再经过一个深度神经网络输出图。</p>
+<p>下面主要介绍一个自回归模型GraphRNN，同时用于分布估计和采样。</p>
+<p>GraphRNN通过一系列的添加节点与边的操作来生成图，包含node-level和edge-level两阶段: node-level RNN生成初始状态, edge-level RNN接受初始状态预测新的节点是否与之前节点相连，当edge-level RNN输出EOS时停止生成<br><img src="7.png" alt=""><br>这个过程也可以看做是在逐渐补全一个邻接矩阵<br><img src="8.png" alt=""><br>在训练时每一步都是输入的真实值，损失函数采用交叉熵。对训练好的模型输入SOS，根据输出的概率采样就可以得到生成的图。</p>
+<p>以上方法对于每一个新加入的节点，都会判断其与之前所有节点是否有边，为了减少计算复杂度，我们还可以采用广度优先搜索法，缩减需要判断的边的条数<br><img src="9.png" alt=""><br>对于结果的评价，可以采用一些图分布的统计量，如比较两个分布之间相似性的Earch Mover Distance和比较两个分布的集合之间相似性的Maximum Mean Discrepancy.</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>Title:</span><a href="/blog-old/2021/07/28/20210728CS224W1415/">CS224W Lecture 14 &amp; 15 Generative Models for Graphs</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">Zepeng Zhang</a></p>
+        <p><span>Created:</span>2021-07-28, 21:45:00</p>
+        <p><span>Updated:</span>2021-07-28, 21:45:00</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/blog-old/2021/07/28/20210728CS224W1415/" title="CS224W Lecture 14 &amp; 15 Generative Models for Graphs">https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/</a>
+            <span class="copy-path" data-clipboard-text="From https://zepengzhang.github.io/blog-old/2021/07/28/20210728CS224W1415/　　By Zepeng Zhang" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog-old/2021/07/29/20210729CS224W16/">
+                    CS224W Lecture 16 Advanced Topics in Graph Neural Networks
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog-old/2021/07/26/20210726CS224W1213/">
+                    CS224W Lecture 12 &amp; 13 Subgraph Mining and Community Detection
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Properties-of-Real-World-Graphs"><span class="toc-number">1.</span> <span class="toc-text">Properties of Real-World Graphs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Traditional-Graph-Generative-Models"><span class="toc-number">2.</span> <span class="toc-text">Traditional Graph Generative Models</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Erdos-Renyi-Random-Graphs"><span class="toc-number">2.1.</span> <span class="toc-text">Erdos-Renyi Random Graphs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Small-World-Model"><span class="toc-number">2.2.</span> <span class="toc-text">The Small-World Model</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kronecker-Graph-Model"><span class="toc-number">2.3.</span> <span class="toc-text">Kronecker Graph Model</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Deep-Graph-Generative-Models"><span class="toc-number">3.</span> <span class="toc-text">Deep Graph Generative Models</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog-old/2021/07/29/20210729CS224W16/" title="Pre: CS224W Lecture 16 Advanced Topics in Graph Neural Networks">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog-old/2021/07/26/20210726CS224W1213/" title="Next: CS224W Lecture 12 &amp; 13 Subgraph Mining and Community Detection">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog-old/2022/12/14/20221214/">Paper Notes</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W17/">CS224W Lecture 17 Scaling Up Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W16/">CS224W Lecture 16 Advanced Topics in Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/28/20210728CS224W1415/">CS224W Lecture 14 & 15 Generative Models for Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/26/20210726CS224W1213/">CS224W Lecture 12 & 13 Subgraph Mining and Community Detection</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/22/20210722CS224W1011/">CS224W Lecture 10 & 11 Reasoning over Knowledge Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W89/">CS224W Lecture 8 & 9 Applications of Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W67/">CS224W Lecture 6 & 7 Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/20/20210720CS224W_Colab1/">CS224W Colab1: Learning Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W5/">CS224W Lecture 5 Message Passing and Node Classification</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W_Colab0/">CS224W Colab0: Introduction of NetworkX and PyTorch Geometric</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/05/20210705CS224W4/">CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/02/20210702CS224W3/">CS224W Lecture 3 Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/06/26/20210625CS224W12/">CS224W Lecture 1 & 2 图机器学习导论 & 传统图机器学习方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/11/23/20201123GNN/">Basics of Graph Convolutional Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/23/20200703website%20modify/">网站优化及小功能添加</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703latex&Lyx%20tips/">Lyx & Latex 使用技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703mathjax/">如何使Hexo支持Latex数学公式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200704auto-correlation/">低自相关波形设计（Waveform design with low auto-correlation）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703Build%20Blog%20with%20Hexo%20&%20Netlify/">利用Hexo & Netlify建立博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2020-2026 Zepeng Zhang
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/blog-old/js/main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/blog-old/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+
+  </div>
+</body>
+</html>

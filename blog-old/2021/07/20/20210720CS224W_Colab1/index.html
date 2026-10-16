@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Zepeng Zhang" />
+
+
+
+<meta name="description" content="在这个colab中，我们会通过node embedding来对Karate Club Network的节点做一个分类。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224W Colab1: Learning Node Embeddings">
+<meta property="og:url" content="https://zepengzhang.github.io/blog-old/2021/07/20/20210720CS224W_Colab1/index.html">
+<meta property="og:site_name" content="Zepeng Zhang&#39;s Blog">
+<meta property="og:description" content="在这个colab中，我们会通过node embedding来对Karate Club Network的节点做一个分类。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/20/20210720CS224W_Colab1/1.png">
+<meta property="og:image" content="https://zepengzhang.github.io/blog-old/2021/07/20/20210720CS224W_Colab1/3.png">
+<meta property="article:published_time" content="2021-07-20T19:44:00.000Z">
+<meta property="article:modified_time" content="2021-07-20T19:44:00.000Z">
+<meta property="article:author" content="Zepeng Zhang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zepengzhang.github.io/blog-old/2021/07/20/20210720CS224W_Colab1/1.png">
+
+<link rel="apple-touch-icon" href= "/blog-old/apple-touch-icon.png">
+
+
+
+
+    <link rel="shortcut icon" href="/blog-old/apple-touch-icon.png">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/blog-old/css/style.css">
+
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>CS224W Colab1: Learning Node Embeddings | Zepeng Zhang&#39;s Blog</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "https://cdnjs.cloudflare.com/ajax/libs/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "/blog-old/"; </script>
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/blog-old/" class="profilepic">
+            <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/blog-old/">Zepeng Zhang</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">A master student at ShanghaiTech</p>
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="" />
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class='no-result'>No results found <i class='fa fa-spinner fa-pulse'></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/blog-old/">主页</a></li>
+                        
+                            <li><a href="/blog-old/archives/">所有文章</a></li>
+                        
+                            <li><a href="/blog-old/tags/">标签云</a></li>
+                        
+                            <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/zepengzhang" target="_blank" rel="noopener" title="GitHub"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/" target="_blank" rel="noopener">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/" target="_blank" rel="noopener">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">A senoir student at WHU</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/blog-old/" class="profilepic">
+                <img src="/blog-old/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/blog-old/" title="回到主页">Zepeng Zhang</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">A master student at ShanghaiTech</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/blog-old/">主页</a></li>
+                
+                    <li><a href="/blog-old/archives/">所有文章</a></li>
+                
+                    <li><a href="/blog-old/tags/">标签云</a></li>
+                
+                    <li><a href="https://zepengzhang.github.io/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zpzhang@whu.edu.cn" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/zepengzhang" title="GitHub"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me"/>
+</nav>
+      <div class="body-wrap"><article id="post-20210720CS224W_Colab1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/blog-old/2021/07/20/20210720CS224W_Colab1/" class="article-date">
+      <time datetime="2021-07-20T19:44:00.000Z" itemprop="datePublished">2021-07-20</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CS224W Colab1: Learning Node Embeddings
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/blog-old/categories/CS224W/">CS224W</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>在这个colab中，我们会通过node embedding来对Karate Club Network的节点做一个分类。<br><a id="more"></a></p>
+<p>本文主要参考资料为<a href="https://web.stanford.edu/class/cs224w/" target="_blank" rel="noopener">CS224W</a>的Colab1。</p>
+<h2 id="Graph-Basics"><a href="#Graph-Basics" class="headerlink" title="Graph Basics"></a>Graph Basics</h2><p>在这节课中依然要用到NetworkX，我们首先导入Karate Club Network</p>
+<pre><code>import networkx as nx
+G = nx.karate_club_graph() # G is an undirected graph
+nx.draw(G, with_labels = True)
+</code></pre><p><img src="1.png" alt=""></p>
+<h3 id="Karate-Club-Network节点的平均的度"><a href="#Karate-Club-Network节点的平均的度" class="headerlink" title="Karate Club Network节点的平均的度"></a>Karate Club Network节点的平均的度</h3><pre><code>def average_degree(num_edges, num_nodes):
+# TODO: Implement this function that takes number of edges
+# and number of nodes, and returns the average node degree of 
+# the graph. Round the result to nearest integer (for example 
+# 3.3 will be rounded to 3 and 3.7 will be rounded to 4)
+avg_degree = 0
+############# Your code here ############
+avg_degree += round((num_edges * 2) / num_nodes)
+#########################################
+return avg_degree
+num_edges = G.number_of_edges()
+num_nodes = G.number_of_nodes()
+avg_degree = average_degree(num_edges, num_nodes)
+print(&quot;Average degree of karate club network is {}&quot;.format(avg_degree))
+
+Output: Average degree of karate club network is 5
+</code></pre><h3 id="Karate-Club-Network节点的平均聚类系数"><a href="#Karate-Club-Network节点的平均聚类系数" class="headerlink" title="Karate Club Network节点的平均聚类系数"></a>Karate Club Network节点的平均聚类系数</h3><p>定义节点并添加特征和label</p>
+<pre><code>def average_clustering_coefficient(G):
+# TODO: Implement this function that takes a nx.Graph
+# and returns the average clustering coefficient. Round 
+# the result to 2 decimal places (for example 3.333 will
+# be rounded to 3.33 and 3.7571 will be rounded to 3.76)
+avg_cluster_coef = 0
+############# Your code here ############
+## Note: 
+## 1: Please use the appropriate NetworkX clustering function
+avg_cluster_coef += round(nx.average_clustering(G), 2)
+#########################################
+return avg_cluster_coef
+avg_cluster_coef = average_clustering_coefficient(G)
+print(&quot;Average clustering coefficient of karate club network is {}&quot;.format(avg_cluster_coef))
+
+Output: Average clustering coefficient of karate club network is 0.57
+</code></pre><h3 id="节点0一轮迭代后的PageRank"><a href="#节点0一轮迭代后的PageRank" class="headerlink" title="节点0一轮迭代后的PageRank"></a>节点0一轮迭代后的PageRank</h3><p>PageRank的迭代式为$r_{j}=\sum_{i \rightarrow j} \beta \frac{r_{i}}{d_{i}}+(1-\beta) \frac{1}{N}$</p>
+<pre><code>def one_iter_pagerank(G, beta, r0, node_id):
+# TODO: Implement this function that takes a nx.Graph, beta, r0 and node id.
+# The return value r1 is one interation PageRank value for the input node.
+# Please round r1 to 2 decimal places.
+r1 = 0
+############# Your code here ############
+## Note: 
+## 1: You should not use nx.pagerank
+temp = 0
+for n in G.neighbors(node_id):
+    temp += 1 / G.degree(n)
+r1 = round(beta * r0 * temp + (1 - beta) / G.number_of_nodes(), 2)
+#########################################
+return r1
+beta = 0.8
+r0 = 1 / G.number_of_nodes()
+node = 0
+r1 = one_iter_pagerank(G, beta, r0, node)
+print(&quot;The PageRank value for node 0 after one iteration is {}&quot;.format(r1))
+
+Output: The PageRank value for node 0 after one iteration is 0.13
+</code></pre><h3 id="节点5的邻近中心度-closeness-centrality"><a href="#节点5的邻近中心度-closeness-centrality" class="headerlink" title="节点5的邻近中心度(closeness centrality)"></a>节点5的邻近中心度(closeness centrality)</h3><pre><code>def closeness_centrality(G, node=5):
+# TODO: Implement the function that calculates closeness centrality 
+# for a node in karate club network. G is the input karate club 
+# network and node is the node id in the graph. Please round the 
+# closeness centrality result to 2 decimal places.
+closeness = 0
+## Note:
+## 1: You can use networkx closeness centrality function.
+## 2: Notice that networkx closeness centrality returns the normalized 
+## closeness directly, which is different from the raw (unnormalized) 
+## one that we learned in the lecture.
+closeness = round(nx.closeness_centrality(G,node) / (len(nx.node_connected_component(G, node)) - 1), 2)
+#########################################
+return closeness
+node = 5
+closeness = closeness_centrality(G, node=node)
+print(&quot;The karate club network has closeness centrality {}&quot;.format(closeness))
+
+Output: The karate club network has closeness centrality 0.01
+</code></pre><h2 id="用Tensor表示图"><a href="#用Tensor表示图" class="headerlink" title="用Tensor表示图"></a>用Tensor表示图</h2><h3 id="将Karate-Club-Network的边的列表用torch-LongTensor表示"><a href="#将Karate-Club-Network的边的列表用torch-LongTensor表示" class="headerlink" title="将Karate Club Network的边的列表用torch.LongTensor表示"></a>将Karate Club Network的边的列表用<code>torch.LongTensor</code>表示</h3><pre><code>import torch
+def graph_to_edge_list(G):
+# TODO: Implement the function that returns the edge list of
+# an nx.Graph. The returned edge_list should be a list of tuples
+# where each tuple is a tuple representing an edge connected 
+# by two nodes.
+edge_list = []
+############# Your code here ############
+edge_list = [edge for edge in G.edges()]
+#########################################
+return edge_list
+def edge_list_to_tensor(edge_list):
+# TODO: Implement the function that transforms the edge_list to
+# tensor. The input edge_list is a list of tuples and the resulting
+# tensor should have the shape [2 x len(edge_list)].
+edge_index = torch.tensor([])
+############# Your code here ############
+edge_index = torch.tensor(edge_list, dtype=torch.long).t()
+#########################################
+return edge_index
+pos_edge_list = graph_to_edge_list(G)
+pos_edge_index = edge_list_to_tensor(pos_edge_list)
+print(&quot;The pos_edge_index tensor has shape {}&quot;.format(pos_edge_index.shape))
+print(&quot;The pos_edge_index tensor has sum value {}&quot;.format(torch.sum(pos_edge_index)))
+
+Output: 
+The pos_edge_index tensor has shape torch.Size([2, 78])
+The pos_edge_index tensor has sum value 2535
+</code></pre><h3 id="实现负采样函数，讨论给出的五个边是否为负边（原图不存在的边）"><a href="#实现负采样函数，讨论给出的五个边是否为负边（原图不存在的边）" class="headerlink" title="实现负采样函数，讨论给出的五个边是否为负边（原图不存在的边）"></a>实现负采样函数，讨论给出的五个边是否为负边（原图不存在的边）</h3><pre><code>import random
+import numpy as np
+def sample_negative_edges(G, num_neg_samples):
+# TODO: Implement the function that returns a list of negative edges.
+# The number of sampled negative edges is num_neg_samples. You do not
+# need to consider the corner case when the number of possible negative edges
+# is less than num_neg_samples. It should be ok as long as your implementation 
+# works on the karate club network. In this implementation, self loop should 
+# not be considered as either a positive or negative edge. Also, notice that 
+# the karate club network is an undirected graph, if (0, 1) is a positive 
+# edge, do you think (1, 0) can be a negative one?
+neg_edge_list = []
+############# Your code here ############
+neg_edge_list = [random.sample(list(enumerate(nx.non_edges(G))), num_neg_samples)[i][1] for i in range(num_neg_samples)]
+#########################################
+return neg_edge_list
+# Sample 78 negative edges
+neg_edge_list = sample_negative_edges(G, len(pos_edge_list))
+# Transform the negative edge list to tensor
+neg_edge_index = edge_list_to_tensor(neg_edge_list)
+print(&quot;The neg_edge_index tensor has shape {}&quot;.format(neg_edge_index.shape))
+# Which of following edges can be negative ones?
+edge_1 = (7, 1)
+edge_2 = (1, 33)
+edge_3 = (33, 22)
+edge_4 = (0, 4)
+edge_5 = (4, 2)
+############# Your code here ############
+## Note:
+## 1: For each of the 5 edges, print whether it can be negative edge
+print(&#39;edge_1&#39;+(&quot; can&#39;t&quot; if G.has_edge(edge_1[0],edge_1[1]) else &#39; can&#39;)+&#39; be negative edge&#39;)
+print(&#39;edge_2&#39;+(&quot; can&#39;t&quot; if G.has_edge(edge_2[0],edge_2[1]) else &#39; can&#39;)+&#39; be negative edge&#39;)
+print(&#39;edge_3&#39;+(&quot; can&#39;t&quot; if G.has_edge(edge_3[0],edge_3[1]) else &#39; can&#39;)+&#39; be negative edge&#39;)
+print(&#39;edge_4&#39;+(&quot; can&#39;t&quot; if G.has_edge(edge_4[0],edge_4[1]) else &#39; can&#39;)+&#39; be negative edge&#39;)
+print(&#39;edge_5&#39;+(&quot; can&#39;t&quot; if G.has_edge(edge_5[0],edge_5[1]) else &#39; can&#39;)+&#39; be negative edge&#39;)
+#########################################
+
+Output:
+The neg_edge_index tensor has shape torch.Size([2, 78])
+edge_1 can&#39;t be negative edge
+edge_2 can be negative edge
+edge_3 can&#39;t be negative edge
+edge_4 can&#39;t be negative edge
+edge_5 can be negative edge
+</code></pre><h2 id="Node-Embedding-Learning"><a href="#Node-Embedding-Learning" class="headerlink" title="Node Embedding Learning"></a>Node Embedding Learning</h2><p>首先调用需要的包，生成初始embedding</p>
+<pre><code>import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+torch.manual_seed(1)
+def create_node_emb(num_node=34, embedding_dim=16):
+# TODO: Implement this function that will create the node embedding matrix.
+# A torch.nn.Embedding layer will be returned. You do not need to change 
+# the values of num_node and embedding_dim. The weight matrix of returned 
+# layer should be initialized under uniform distribution. 
+emb = None
+############# Your code here ############
+emb = nn.Embedding(num_nodes, embedding_dim)
+emb.weight.data = torch.rand(emb.weight.data.shape)
+#########################################
+return emb
+emb = create_node_emb()
+ids = torch.LongTensor([0, 3])
+# Print the embedding layer
+print(&quot;Embedding: {}&quot;.format(emb))
+# An example that gets the embeddings for node 0 and 3
+print(emb(ids))
+
+Output:
+Embedding: Embedding(34, 16)
+tensor([[0.2114, 0.7335, 0.1433, 0.9647, 0.2933, 0.7951, 0.5170, 0.2801, 0.8339,
+        0.1185, 0.2355, 0.5599, 0.8966, 0.2858, 0.1955, 0.1808],
+        [0.7486, 0.6546, 0.3843, 0.9820, 0.6012, 0.3710, 0.4929, 0.9915, 0.8358,
+        0.4629, 0.9902, 0.7196, 0.2338, 0.0450, 0.7906, 0.9689]],
+    grad_fn=&lt;EmbeddingBackward&gt;)
+</code></pre><p>利用PCA将16维的embedding降到两维并进行可视化</p>
+<pre><code>def visualize_emb(emb):
+X = emb.weight.data.numpy()
+pca = PCA(n_components=2)
+components = pca.fit_transform(X)
+plt.figure(figsize=(6, 6))
+club1_x = []
+club1_y = []
+club2_x = []
+club2_y = []
+for node in G.nodes(data=True):
+    if node[1][&#39;club&#39;] == &#39;Mr. Hi&#39;:
+    club1_x.append(components[node[0]][0])
+    club1_y.append(components[node[0]][1])
+    else:
+    club2_x.append(components[node[0]][0])
+    club2_y.append(components[node[0]][1])
+plt.scatter(club1_x, club1_y, color=&quot;red&quot;, label=&quot;Mr. Hi&quot;)
+plt.scatter(club2_x, club2_y, color=&quot;blue&quot;, label=&quot;Officer&quot;)
+plt.legend()
+plt.show()
+# Visualize the initial random embeddding
+visualize_emb(emb)
+</code></pre><p>可以看到随机初始化的embedding完全没有分开不同类的节点</p>
+<p>接下来通过SGD学习embedding，这里的学习目标为相邻的节点的embedding的内积相近</p>
+<pre><code>from torch.optim import SGD
+def accuracy(pred, label):
+# TODO: Implement the accuracy function. This function takes the 
+# pred tensor (the resulting tensor after sigmoid) and the label 
+# tensor (torch.LongTensor). Predicted value greater than 0.5 will 
+# be classified as label 1. Else it will be classified as label 0.
+# The returned accuracy should be rounded to 4 decimal places. 
+# For example, accuracy 0.82956 will be rounded to 0.8296.
+accu = 0.0
+############# Your code here ############
+accu = sum(torch.round(pred) == label) / len(pred)
+#########################################
+return accu
+def train(emb, loss_fn, sigmoid, train_label, train_edge):
+# TODO: Train the embedding layer here. You can also change epochs and 
+# learning rate. In general, you need to implement: 
+# (1) Get the embeddings of the nodes in train_edge
+# (2) Dot product the embeddings between each node pair
+# (3) Feed the dot product result into sigmoid
+# (4) Feed the sigmoid output into the loss_fn
+# (5) Print both loss and accuracy of each epoch 
+# (as a sanity check, the loss should decrease during training)
+epochs = 500
+learning_rate = 0.1
+optimizer = SGD(emb.parameters(), lr=learning_rate, momentum=0.9)
+for i in range(epochs):
+    ############# Your code here ############
+    optimizer.zero_grad()
+    pred = sigmoid(torch.sum(emb(train_edge)[0].mul(emb(train_edge)[1]),1))
+    loss = loss_fn(pred, train_label)        
+    loss.backward()  # Derive gradients.
+    optimizer.step()  # Update parameters based on gradients.                
+    print(&quot;Epoch {} Loss: {}, Accuracy: {}&quot;.format(i,loss,accuracy(pred, train_label)))
+    #########################################
+loss_fn = nn.BCELoss()
+sigmoid = nn.Sigmoid()
+# Generate the positive and negative labels
+pos_label = torch.ones(pos_edge_index.shape[1], )
+neg_label = torch.zeros(neg_edge_index.shape[1], )
+# Concat positive and negative labels into one tensor
+train_label = torch.cat([pos_label, neg_label], dim=0)
+# Concat positive and negative edges into one tensor
+# Since the network is very small, we do not split the edges into val/test sets
+train_edge = torch.cat([pos_edge_index, neg_edge_index], dim=1)
+train(emb, loss_fn, sigmoid, train_label, train_edge)
+visualize_emb(emb)
+</code></pre><p><img src="3.png" alt=""><br>可以看到学习后的embedding基本能够区分不同类的节点。</p>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p><a href="https://colab.research.google.com/drive/1b9rZIjD7MUEKwYbXZc3dchTBTpzdrvpd?usp=sharing" target="_blank" rel="noopener">CS224W - Colab1</a></p>
+<p><a href="https://blog.csdn.net/PolarisRisingWar/article/details/117531689" target="_blank" rel="noopener">cs224w（图机器学习）2021冬季课程学习笔记5 Colab 1：Node Embeddings</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>Title:</span><a href="/blog-old/2021/07/20/20210720CS224W_Colab1/">CS224W Colab1: Learning Node Embeddings</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">Zepeng Zhang</a></p>
+        <p><span>Created:</span>2021-07-20, 21:44:00</p>
+        <p><span>Updated:</span>2021-07-20, 21:44:00</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/blog-old/2021/07/20/20210720CS224W_Colab1/" title="CS224W Colab1: Learning Node Embeddings">https://zepengzhang.github.io/blog-old/2021/07/20/20210720CS224W_Colab1/</a>
+            <span class="copy-path" data-clipboard-text="From https://zepengzhang.github.io/blog-old/2021/07/20/20210720CS224W_Colab1/　　By Zepeng Zhang" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" title="CC BY-NC-SA 4.0 International" target = "_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/blog-old/2021/07/21/20210721CS224W67/">
+                    CS224W Lecture 6 &amp; 7 Graph Neural Networks
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/blog-old/2021/07/08/20210708CS224W5/">
+                    CS224W Lecture 5 Message Passing and Node Classification
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Graph-Basics"><span class="toc-number">1.</span> <span class="toc-text">Graph Basics</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Karate-Club-Network节点的平均的度"><span class="toc-number">1.1.</span> <span class="toc-text">Karate Club Network节点的平均的度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Karate-Club-Network节点的平均聚类系数"><span class="toc-number">1.2.</span> <span class="toc-text">Karate Club Network节点的平均聚类系数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点0一轮迭代后的PageRank"><span class="toc-number">1.3.</span> <span class="toc-text">节点0一轮迭代后的PageRank</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点5的邻近中心度-closeness-centrality"><span class="toc-number">1.4.</span> <span class="toc-text">节点5的邻近中心度(closeness centrality)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用Tensor表示图"><span class="toc-number">2.</span> <span class="toc-text">用Tensor表示图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#将Karate-Club-Network的边的列表用torch-LongTensor表示"><span class="toc-number">2.1.</span> <span class="toc-text">将Karate Club Network的边的列表用torch.LongTensor表示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现负采样函数，讨论给出的五个边是否为负边（原图不存在的边）"><span class="toc-number">2.2.</span> <span class="toc-text">实现负采样函数，讨论给出的五个边是否为负边（原图不存在的边）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-Embedding-Learning"><span class="toc-number">3.</span> <span class="toc-text">Node Embedding Learning</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#References"><span class="toc-number"></span> <span class="toc-text">References</span></a>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide"  title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/blog-old/2021/07/21/20210721CS224W67/" title="Pre: CS224W Lecture 6 &amp; 7 Graph Neural Networks">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/blog-old/2021/07/08/20210708CS224W5/" title="Next: CS224W Lecture 5 Message Passing and Node Classification">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog-old/2022/12/14/20221214/">Paper Notes</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W17/">CS224W Lecture 17 Scaling Up Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/29/20210729CS224W16/">CS224W Lecture 16 Advanced Topics in Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/28/20210728CS224W1415/">CS224W Lecture 14 & 15 Generative Models for Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/26/20210726CS224W1213/">CS224W Lecture 12 & 13 Subgraph Mining and Community Detection</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/22/20210722CS224W1011/">CS224W Lecture 10 & 11 Reasoning over Knowledge Graphs</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W89/">CS224W Lecture 8 & 9 Applications of Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/21/20210721CS224W67/">CS224W Lecture 6 & 7 Graph Neural Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/20/20210720CS224W_Colab1/">CS224W Colab1: Learning Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W5/">CS224W Lecture 5 Message Passing and Node Classification</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/08/20210708CS224W_Colab0/">CS224W Colab0: Introduction of NetworkX and PyTorch Geometric</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/05/20210705CS224W4/">CS224W Lecture 4 Graph as Matrix: Pagerank, Random walks and Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/07/02/20210702CS224W3/">CS224W Lecture 3 Node Embeddings</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2021/06/26/20210625CS224W12/">CS224W Lecture 1 & 2 图机器学习导论 & 传统图机器学习方法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/11/23/20201123GNN/">Basics of Graph Convolutional Networks</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/23/20200703website%20modify/">网站优化及小功能添加</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703latex&Lyx%20tips/">Lyx & Latex 使用技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703mathjax/">如何使Hexo支持Latex数学公式</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200704auto-correlation/">低自相关波形设计（Waveform design with low auto-correlation）</a></li><li class="post-list-item"><a class="post-list-link" href="/blog-old/2020/07/03/20200703Build%20Blog%20with%20Hexo%20&%20Netlify/">利用Hexo & Netlify建立博客</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2020-2026 Zepeng Zhang
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/blog-old/js/main.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/blog-old/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+    <script>
+        var originTitle = document.title;
+        var titleTime;
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                document.title = "(つェ⊂) 我藏好了哦~ " + originTitle;
+                clearTimeout(titleTime);
+            }
+            else {
+                document.title = "(*´∇｀*) 被你发现啦~ " + originTitle;
+                titleTime = setTimeout(function() {
+                    document.title = originTitle;
+                }, 2000);
+            }
+        })
+    </script>
+
+
+  </div>
+</body>
+</html>
