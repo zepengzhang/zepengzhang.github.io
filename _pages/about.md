@@ -29,3 +29,5 @@ I am a PhD student at [École Polytechnique Fédérale de Lausanne (EPFL)](https
 My research focuses on generative modeling and graph machine learning for structured and dynamical data. I develop methods that incorporate relational structure and optimization principles to improve inference, generalization, robustness, and computational efficiency.
 
 Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) 🇨🇳 and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU) 🇨🇳. I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) 🇨🇳 and [City University of Hong Kong](https://www.cityu.edu.hk/) (CityU) 🇭🇰 as a research intern.
+
+> 📣 Currently, I am particularly interested in generative models, with a focus on flow matching methods in spatiotemporal domains. I am also interested in understanding how to make these models more effective and efficient. I'm open to collaboration and would be happy to discuss any potential projects! Please feel free to drop me an [email](mailto:zepeng.zhang@epfl.ch) if you're interested.
