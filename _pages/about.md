@@ -30,6 +30,4 @@ My research focuses on generative modeling, graph machine learning, and graph si
 
 Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) 🇨🇳 and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU) 🇨🇳. I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) 🇨🇳 and [City University of Hong Kong](https://www.cityu.edu.hk/) (CityU) 🇭🇰 as a research intern.
 
-<blockquote class="collaboration-callout" markdown="1">
-📣 I am always open to potential collaborations. Currently, I am particularly interested in understanding the behavior and developing more efficient/effective flow matching methods for spatiotemporal systems. Please feel free to drop me an [email](mailto:zepeng.zhang@epfl.ch) if you're interested.
-</blockquote>
+I am always open to potential collaborations. Please feel free to drop me an [email](mailto:zepeng.zhang@epfl.ch) if you’re interested.
