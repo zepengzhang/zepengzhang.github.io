@@ -24,8 +24,8 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a PhD student at [École Polytechnique Fédérale de Lausanne (EPFL)](https://www.epfl.ch/en/). I work in the [Intelligent Maintenance and Operations Systems (IMOS)](https://www.epfl.ch/labs/imos/) Lab under the supervision of Prof. Olga Fink. During my PhD, I have also worked with Prof. [Jhony H. Giraldo](https://jhonygiraldo.github.io/) at [Télécom Paris](https://www.telecom-paris.fr/en/home), [Institut Polytechnique de Paris](https://www.ip-paris.fr/en), as a visiting PhD student.
+I am a PhD student at [École Polytechnique Fédérale de Lausanne (EPFL)](https://www.epfl.ch/en/) 🇨🇭. I work in the [Intelligent Maintenance and Operations Systems (IMOS)](https://www.epfl.ch/labs/imos/) Lab under the supervision of Prof. Olga Fink. During my PhD, I have also worked with Prof. [Jhony H. Giraldo](https://jhonygiraldo.github.io/) at [Télécom Paris](https://www.telecom-paris.fr/en/home) 🇫🇷, [Institut Polytechnique de Paris](https://www.ip-paris.fr/en) 🇫🇷, as a visiting PhD student.
 
 My research focuses on generative modeling and graph machine learning for structured and dynamical data. I develop methods that incorporate relational structure and optimization principles to improve inference, generalization, robustness, and computational efficiency.
 
-Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU). I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) and [City University of Hong Kong](https://www.cityu.edu.hk/) (CityU) as a research intern.
+Previously, I received my master's degree at [ShanghaiTech University](https://www.shanghaitech.edu.cn/) 🇨🇳 and B.Eng. degree from [Wuhan University](https://www.whu.edu.cn/) (WHU) 🇨🇳. I also had the opportunity to visit [Peking University](https://english.pku.edu.cn/) (PKU) 🇨🇳 and [City University of Hong Kong](https://www.cityu.edu.hk/) (CityU) 🇭🇰 as a research intern.
