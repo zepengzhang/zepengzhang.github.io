@@ -3,7 +3,7 @@ layout: page
 permalink: /personal/
 title: Personal
 nav: true
-nav_order: 4
+nav_order: 6
 ---
 
 ## Beyond Research
