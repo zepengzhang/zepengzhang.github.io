@@ -37,7 +37,7 @@ Main publications:
 
 **Optimization and Algorithm Unrolling**
 
-I study the connections among minorization-maximization, fractional programming, and gradient-based methods to develop efficient algorithms for nonconvex optimization. I also develop unrolled networks that learn adaptive updates for beamforming and resource allocation. These works were developed in collaboration with [ZheXian Yang](https://openreview.net/profile?id=%7EZhexian_Yang1), [Ziping Zhao](https://faculty.sist.shanghaitech.edu.cn/zhao/), [Kaiming Shen](https://kaimingshen.github.io/), [Daniel P. Palomar](https://www.danielppalomar.com/), and [Wei Yu](https://www.comm.utoronto.ca/~weiyu/).
+I study the connections among minorization-maximization, fractional programming, and gradient-based methods to develop efficient algorithms for nonconvex optimization in communications. I also develop unrolled networks that learn adaptive updates based on the proposed algorithms. These works were developed in collaboration with [ZheXian Yang](https://openreview.net/profile?id=%7EZhexian_Yang1), [Ziping Zhao](https://faculty.sist.shanghaitech.edu.cn/zhao/), [Kaiming Shen](https://kaimingshen.github.io/), [Daniel P. Palomar](https://www.danielppalomar.com/), and [Wei Yu](https://www.comm.utoronto.ca/~weiyu/).
 
 <img src="{{ "/assets/img/research/mm-net-recurrent-unfolding.png" | relative_url }}" alt="MM-Net recurrent unfolding architecture with learned adaptive majorization parameters and projected beamforming updates." class="img-fluid rounded" width="2000" height="538" loading="lazy">
 
