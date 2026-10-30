@@ -14,7 +14,7 @@ I study how relational structure can inform generative modeling. I develop flow 
 
 <img src="{{ "/assets/img/research/graph-spectral-flow-matching.png" | relative_url }}" alt="Overview of GRASP: graph-spectral flow matching and velocity-based anomaly scoring, compared with a linear probability path." class="img-fluid rounded" width="2000" height="788" loading="lazy">
 
-Main publications:
+Representative publications:
 
 - [Spatiotemporal Imputation with Graph-Informed Flow Matching](https://arxiv.org/pdf/2606.06682) (ICML 2026)
 - [Graph-Spectral Flow Matching for Multivariate Time Series Anomaly Detection](https://arxiv.org/pdf/2609.36765) (Preprint)
@@ -27,7 +27,7 @@ I develop optimization-induced and algorithm-informed graph neural networks that
 
 <img src="{{ "/assets/img/research/adaptive-structure-message-passing.png" | relative_url }}" alt="Adaptive-structure message passing jointly updates graph signals and graph structure to produce denoised outputs." class="img-fluid rounded" width="2000" height="471" loading="lazy">
 
-Main publications:
+Representative publications:
 
 - [Graph Neural Networks With Adaptive Structures](https://doi.org/10.1109/JSTSP.2024.3485892) (IEEE JSTSP 2024)
 - [Domain Adaptive Unfolded Graph Neural Networks](https://ojs.aaai.org/index.php/AAAI/article/view/34431) (AAAI 2025)
@@ -41,7 +41,7 @@ I study the connections among minorization-maximization, fractional programming,
 
 <img src="{{ "/assets/img/research/mm-net-recurrent-unfolding.png" | relative_url }}" alt="MM-Net recurrent unfolding architecture with learned adaptive majorization parameters and projected beamforming updates." class="img-fluid rounded" width="2000" height="538" loading="lazy">
 
-Main publications:
+Representative publications:
 
 - [MM-Net: Recurrent Unfolding With Adaptive Majorization for Weighted Sum-Rate Beamforming](https://doi.org/10.1109/LSP.2026.3710384) (IEEE SPL 2026)
 - [Discerning and Enhancing the Weighted Sum-Rate Maximization Algorithms in Communications](https://arxiv.org/abs/2311.04546) (Preprint, 2023)
