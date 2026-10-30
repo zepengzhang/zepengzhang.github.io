@@ -8,9 +8,9 @@ nav_order: 1
 
 I develop theoretically grounded and computationally efficient methods at the intersection of generative modeling, graph machine learning, signal processing, and optimization, with applications in complex industrial systems.
 
-**Generative Modeling for Structured and Dynamical Data**
+**Generative Modeling for Structured Data**
 
-I study how dependencies across variables and time can inform generative modeling. I develop flow matching methods that incorporate graph structure into source distributions and probability paths, connecting generative learning with graph signal processing. These works were developed in collaboration with [Jhony H. Giraldo](https://jhonygiraldo.github.io/), [Aref Einizade](https://arefeinizade.github.io/), [Wenbin Wang](https://wenbinwang12.github.io/), and [Olga Fink](https://people.epfl.ch/olga.fink?lang=en).
+I study how relational structure can inform generative modeling. I develop flow matching methods that incorporate graph structure into source distributions and probability paths, connecting generative learning with graph signal processing. These works were developed in collaboration with [Jhony H. Giraldo](https://jhonygiraldo.github.io/), [Aref Einizade](https://arefeinizade.github.io/), [Wenbin Wang](https://wenbinwang12.github.io/), and [Olga Fink](https://people.epfl.ch/olga.fink?lang=en).
 
 <img src="{{ "/assets/img/research/graph-spectral-flow-matching.png" | relative_url }}" alt="Overview of GRASP: graph-spectral flow matching and velocity-based anomaly scoring, compared with a linear probability path." class="img-fluid rounded" width="2000" height="788" loading="lazy">
 
