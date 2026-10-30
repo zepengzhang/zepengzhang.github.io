@@ -21,9 +21,9 @@ Main publications:
 
 <br>
 
-**Robust and Generalizable Graph Neural Networks**
+**Optimization-Induced Graph Neural Networks**
 
-I develop graph neural networks that adapt to noisy graphs and distribution shifts. Using optimization and algorithm unrolling, I design message passing methods that jointly learn node representations and graph structures to improve robustness and generalization across domains. These works were developed in collaboration with [Ziping Zhao](https://faculty.sist.shanghaitech.edu.cn/zhao/), [Zengfeng Huang](https://zengfenghuang.github.io/), [Songtao Lu](https://songtaogithub.github.io/), and [Olga Fink](https://people.epfl.ch/olga.fink?lang=en).
+I develop optimization-induced and algorithm-informed graph neural networks that adapt to noisy graphs and distribution shifts. These works were developed in collaboration with [Ziping Zhao](https://faculty.sist.shanghaitech.edu.cn/zhao/), [Zengfeng Huang](https://zengfenghuang.github.io/), [Songtao Lu](https://songtaogithub.github.io/), and [Olga Fink](https://people.epfl.ch/olga.fink?lang=en).
 
 <img src="{{ "/assets/img/research/adaptive-structure-message-passing.png" | relative_url }}" alt="Adaptive-structure message passing jointly updates graph signals and graph structure to produce denoised outputs." class="img-fluid rounded" width="2000" height="471" loading="lazy">
 
@@ -31,6 +31,7 @@ Main publications:
 
 - [Graph Neural Networks With Adaptive Structures](https://doi.org/10.1109/JSTSP.2024.3485892) (IEEE JSTSP 2024)
 - [Domain Adaptive Unfolded Graph Neural Networks](https://ojs.aaai.org/index.php/AAAI/article/view/34431) (AAAI 2025)
+- [Algorithm-Informed Graph Neural Networks for Leakage Detection and Localization in Water Distribution Networks](https://arxiv.org/abs/2408.02797) (RESS 2025)
 
 <br>
 
