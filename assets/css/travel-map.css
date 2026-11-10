@@ -1,0 +1,178 @@
+/* Personal travel map; all styles stay within this section. */
+.travel-atlas {
+  margin: 2.5rem 0 1.5rem;
+}
+.travel-atlas h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+.travel-atlas-tabs {
+  display: flex;
+  gap: 1.25rem;
+  border-bottom: 1px solid var(--global-divider-color);
+  margin-bottom: 0.75rem;
+}
+.travel-atlas-tabs button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--global-text-color-light);
+  padding: 0.5rem 0 0.65rem;
+  font: inherit;
+  cursor: pointer;
+}
+.travel-atlas-tabs button[aria-selected="true"] {
+  color: var(--global-theme-color);
+  border-bottom-color: currentColor;
+}
+.travel-atlas button:focus-visible,
+.travel-atlas summary:focus-visible {
+  outline: 2px solid var(--global-theme-color);
+  outline-offset: 4px;
+}
+.travel-atlas-frame {
+  position: relative;
+  background: #f0f5f4;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.travel-atlas-frame svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.travel-atlas .atlas-sphere {
+  fill: #edf3f1;
+}
+.travel-atlas .atlas-land {
+  fill: #d0ddd6;
+}
+.travel-atlas .atlas-borders {
+  fill: none;
+  stroke: #f0f5f4;
+  stroke-width: 0.65;
+}
+.travel-atlas .atlas-graticule {
+  fill: none;
+  stroke: #dfe8e4;
+  stroke-width: 0.6;
+}
+.travel-atlas .atlas-marker {
+  stroke: #fff;
+  stroke-width: 1.6;
+  cursor: pointer;
+}
+.travel-atlas .atlas-marker:hover,
+.travel-atlas .atlas-marker:focus,
+.travel-atlas .atlas-marker.is-selected {
+  stroke: var(--global-theme-color);
+  stroke-width: 2.5;
+  outline: none;
+}
+.travel-atlas .atlas-label {
+  fill: #425c56;
+  font-size: 15px;
+  paint-order: stroke;
+  stroke: #f0f5f4;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.travel-atlas-tooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 12px));
+  pointer-events: none;
+  padding: 0.4rem 0.65rem;
+  border-radius: 4px;
+  background: var(--global-bg-color);
+  color: var(--global-text-color);
+  box-shadow: 0 2px 12px #0002;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.travel-atlas-caption {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+  color: var(--global-text-color-light);
+}
+.travel-atlas-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.travel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.travel-dot-asia {
+  background: #c26959;
+}
+.travel-dot-europe {
+  background: #48877c;
+  margin-left: 0.6rem;
+}
+.travel-atlas-places {
+  border-top: 1px solid var(--global-divider-color);
+  padding-top: 0.65rem;
+  font-size: 0.9rem;
+}
+.travel-atlas-places summary {
+  cursor: pointer;
+}
+.travel-atlas-places ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.8rem 0;
+}
+.travel-atlas-places button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--global-theme-color);
+  font: inherit;
+  cursor: pointer;
+}
+.travel-atlas-fallback {
+  position: absolute;
+  inset: 40% 1rem auto;
+  text-align: center;
+  color: var(--global-text-color-light);
+}
+html[data-theme="dark"] .travel-atlas-frame,
+html[data-theme="dark"] .travel-atlas .atlas-sphere {
+  background: #202d2b;
+  fill: #202d2b;
+}
+html[data-theme="dark"] .travel-atlas .atlas-land {
+  fill: #3d534b;
+}
+html[data-theme="dark"] .travel-atlas .atlas-borders {
+  stroke: #202d2b;
+}
+html[data-theme="dark"] .travel-atlas .atlas-graticule {
+  stroke: #31433d;
+}
+html[data-theme="dark"] .travel-atlas .atlas-label {
+  fill: #c4d8d0;
+  stroke: #202d2b;
+}
+@media (max-width: 575px) {
+  .travel-atlas-tabs {
+    gap: 1rem;
+  }
+  .travel-atlas .atlas-label {
+    font-size: 22px;
+  }
+  .travel-atlas .atlas-marker {
+    stroke-width: 2;
+  }
+}

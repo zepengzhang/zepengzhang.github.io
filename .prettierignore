@@ -13,3 +13,6 @@ _scripts/*
 
 # Archived Hexo output; preserve generated files as published.
 blog-old/**
+
+# Generated Natural Earth geography; preserve the upstream compact data.
+assets/json/travel-world.json
